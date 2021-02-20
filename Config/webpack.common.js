@@ -20,13 +20,13 @@ module.exports = {
     ],
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "../dist"),
   },
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: "Source/Html/index.html",
-      title: "Cellular Automata",
+      title: "Cellular Automata Toolbox",
     }),
   ],
   resolve: {

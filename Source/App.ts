@@ -232,10 +232,10 @@ const setUpApp = () => {
     renderingContext: context,
   };
 
-  const family = CaFamily.Cyclic;
+  const family = CaFamily.Generation;
 
   const defaultRule: CaRule = {
-    rule: namedCyclicRules.imperfect,
+    rule: namedGenerationRules.faders,
     type: family,
   };
 
