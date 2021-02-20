@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cellular Automata</title>
+  </head>
+  <body>
+    <main>
+      <h1>Cellular Automata</h1>
+      <canvas class="main-canvas" height="200" id="canvas" width="200"></canvas>
+      <form data-target="form" id="preset-form" novalidate>
+        <div aria-labelledby="family" role="radiogroup">
+          <div id="family">Family</div>
+          <div class="radio">
+            <input
+              data-target="radioButton"
+              id="family-cyclic"
+              name="family"
+              type="radio"
+              value="Cyclic"
+            />
+            <label for="family-cyclic">Cyclic</label>
+          </div>
+          <div class="radio">
+            <input
+              checked
+              data-target="radioButton"
+              id="family-generation"
+              name="family"
+              type="radio"
+              value="Generation"
+            />
+            <label for="family-generation">Generations</label>
+          </div>
+          <div class="radio">
+            <input
+              data-target="radioButton"
+              id="family-lifelike"
+              name="family"
+              type="radio"
+              value="Lifelike"
+            />
+            <label for="family-lifelike">Lifelike</label>
+          </div>
+        </div>
+        <div id="presets-label">Presets</div>
+        <select
+          aria-labelledby="presets-label"
+          data-target="select"
+          name="preset"
+          id="presets"
+        >
+          <option value="belZhab">Bel Zhab</option>
+          <option value="bombers">Bombers</option>
+          <option value="faders" selected>Faders</option>
+        </select>
+        <button type="submit">Load Preset</button>
+      </form>
+    </main>
+  </body>
+</html>
