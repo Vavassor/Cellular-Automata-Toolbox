@@ -16,6 +16,7 @@ export interface RadioButtonControllerSpec {
   classSpec?: RadioButtonControllerClassSpec;
   handleChange?: HandleChange;
   id: string;
+  isChecked?: boolean;
 }
 
 export interface RadioButtonControllerClassSpec {
@@ -29,7 +30,7 @@ const defaultClassSpec: RadioButtonControllerClassSpec = {
 export const createRadioButtonController = (
   spec: RadioButtonControllerSpec
 ) => {
-  const { handleChange, id } = spec;
+  const { handleChange, id, isChecked } = spec;
   const classSpec = spec.classSpec || defaultClassSpec;
 
   const controller: RadioButtonController = {
@@ -42,6 +43,9 @@ export const createRadioButtonController = (
 
   if (handleChange) {
     radioButton.addEventListener("change", handleChange);
+  }
+  if (isChecked !== undefined) {
+    radioButton.checked = !!isChecked;
   }
 
   return controller;
