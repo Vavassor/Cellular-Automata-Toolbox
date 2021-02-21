@@ -9,7 +9,6 @@ export interface OptionSpec {
 }
 
 export interface SelectFieldComponentSpec {
-  ariaLabelledBy: string;
   classSpec?: SelectFieldComponentClassSpec;
   id: string;
   name?: string;
@@ -35,14 +34,13 @@ const createOption = (optionSpec: OptionSpec, optionClass: string) => {
 };
 
 export const createSelectFieldComponent = (spec: SelectFieldComponentSpec) => {
-  const { ariaLabelledBy, id, name } = spec;
+  const { id, name } = spec;
   const classSpec = spec.classSpec || defaultClassSpec;
 
   const select = document.createElement("select");
   select.classList.add(classSpec.select);
   select.dataset.target = "select";
   select.id = id;
-  select.setAttribute("aria-labelledby", ariaLabelledBy);
 
   if (name) {
     select.name = name;

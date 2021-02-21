@@ -1,3 +1,4 @@
+import "normalize.css";
 import {
   createSelectFieldComponent,
   OptionSpec
@@ -174,18 +175,17 @@ const createOptionsByFamily = (family: CaFamily) => {
 const setFamily = (app: App, family: CaFamily) => {
   app.family = family;
 
-  const presetsId = "presets";
+  const presetId = "preset";
 
   const { select } = createSelectFieldComponent({
-    ariaLabelledBy: "presets-label",
-    id: presetsId,
+    id: presetId,
     name: "preset",
     options: createOptionsByFamily(family),
   });
-  const presets = document.getElementById(presetsId)!;
+  const presets = document.getElementById(presetId)!;
   presets.replaceWith(select);
 
-  app.formControllers.presetField = createPresetField(app, presetsId);
+  app.formControllers.presetField = createPresetField(app, presetId);
 };
 
 const createFamilyRadioButton = (app: App, inputId: string) => {
@@ -273,7 +273,7 @@ const setUpApp = () => {
   startAnimation();
 
   app.formControllers.presetForm = createPresetForm(app, "preset-form");
-  app.formControllers.presetField = createPresetField(app, "presets");
+  app.formControllers.presetField = createPresetField(app, "preset");
   app.formControllers.cyclicFamilyRadioButton = createFamilyRadioButton(
     app,
     "family-cyclic"
