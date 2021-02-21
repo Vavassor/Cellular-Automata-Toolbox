@@ -1,39 +1,42 @@
 import "normalize.css";
 import {
   createSelectFieldComponent,
-  OptionSpec
+  OptionSpec,
 } from "./Components/SelectComponent";
-import { createFormController, FormController } from "./Controllers/FormController";
+import {
+  createFormController,
+  FormController,
+} from "./Controllers/FormController";
 import {
   createRadioButtonController,
-  RadioButtonController
+  RadioButtonController,
 } from "./Controllers/RadioButtonController";
 import {
   createSelectFieldController,
-  SelectFieldController
+  SelectFieldController,
 } from "./Controllers/SelectFieldController";
 import {
   CyclicCaRule,
   namedRules as namedCyclicRules,
-  updateCyclicCa
+  updateCyclicCa,
 } from "./CyclicCa";
 import {
   GenerationCaRule,
   namedRules as namedGenerationRules,
-  updateGenerationCa
+  updateGenerationCa,
 } from "./GenerationCa";
 import { createGrid, FillType, Grid } from "./Grid";
 import {
   LifelikeCaRule,
   namedRules as namedLifelikeRules,
-  updateLifelikeCa
+  updateLifelikeCa,
 } from "./LifelikeCa";
 import "./Stylesheets/index.css";
 import {
   clearCanvas,
   drawGrid,
   updateCanvas,
-  VideoContext
+  VideoContext,
 } from "./VideoContext";
 
 enum CaFamily {
@@ -188,7 +191,11 @@ const setFamily = (app: App, family: CaFamily) => {
   app.formControllers.presetField = createPresetField(app, presetId);
 };
 
-const createFamilyRadioButton = (app: App, inputId: string) => {
+const createFamilyRadioButton = (
+  app: App,
+  inputId: string,
+  isChecked?: boolean
+) => {
   const handleChange = (event: Event) => {
     const radioButton = event.target as HTMLInputElement;
     const family = radioButton.value as CaFamily;
@@ -198,6 +205,7 @@ const createFamilyRadioButton = (app: App, inputId: string) => {
   const controller = createRadioButtonController({
     handleChange,
     id: inputId,
+    isChecked,
   });
 
   return controller;
@@ -280,7 +288,8 @@ const setUpApp = () => {
   );
   app.formControllers.generationFamilyRadioButton = createFamilyRadioButton(
     app,
-    "family-generation"
+    "family-generation",
+    true
   );
   app.formControllers.lifelikeFamilyRadioButton = createFamilyRadioButton(
     app,
