@@ -1,18 +1,19 @@
+import { CaRuleBase } from "./CaRule";
 import { Point2d } from "./Geometry";
 import {
   BoundaryRule,
+  FillType,
   getGridSampleFunction,
   Grid,
   GridSampleFunction,
 } from "./Grid";
-import { HasName } from "./HasName";
 
 enum Neighborhood {
   Moore,
   VonNeumann,
 }
 
-export interface CyclicCaRule extends HasName {
+export interface CyclicCaRule extends CaRuleBase {
   advanceThreshold: number;
   boundaryRule: BoundaryRule;
   neighborhood: Neighborhood;
@@ -35,7 +36,8 @@ interface NamedRules {
 export const namedRules: NamedRules = {
   threeOneThree: {
     advanceThreshold: 3,
-    boundaryRule: BoundaryRule.Toroidal,
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandom,
     name: "313",
     neighborhood: Neighborhood.Moore,
     neighborhoodRange: 1,
@@ -43,7 +45,8 @@ export const namedRules: NamedRules = {
   },
   basic: {
     advanceThreshold: 1,
-    boundaryRule: BoundaryRule.Toroidal,
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandom,
     name: "CCA",
     neighborhood: Neighborhood.VonNeumann,
     neighborhoodRange: 1,
@@ -51,7 +54,8 @@ export const namedRules: NamedRules = {
   },
   imperfect: {
     advanceThreshold: 2,
-    boundaryRule: BoundaryRule.Toroidal,
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandom,
     name: "Imperfect",
     neighborhood: Neighborhood.Moore,
     neighborhoodRange: 1,
@@ -59,7 +63,8 @@ export const namedRules: NamedRules = {
   },
   squarishSpirals: {
     advanceThreshold: 2,
-    boundaryRule: BoundaryRule.Toroidal,
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandom,
     name: "Squarish Spirals",
     neighborhood: Neighborhood.VonNeumann,
     neighborhoodRange: 2,

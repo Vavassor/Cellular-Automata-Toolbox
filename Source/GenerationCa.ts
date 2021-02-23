@@ -1,7 +1,7 @@
-import { BoundaryRule, getGridSampleFunction, Grid } from "./Grid";
-import { HasName } from "./HasName";
+import { CaRuleBase } from "./CaRule";
+import { BoundaryRule, FillType, getGridSampleFunction, Grid } from "./Grid";
 
-export interface GenerationCaRule extends HasName {
+export interface GenerationCaRule extends CaRuleBase {
   birthPattern: number[];
   boundaryRule: BoundaryRule;
   stateCount: number;
@@ -13,26 +13,109 @@ interface NamedRules {
 }
 
 export const namedRules: NamedRules = {
+  banners: {
+    birthPattern: [3, 4, 5, 7],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
+    name: "Banners",
+    stateCount: 5,
+    survivalPattern: [2, 3, 6, 7],
+  },
   belZhab: {
     birthPattern: [2, 3],
-    boundaryRule: BoundaryRule.Toroidal,
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
     name: "Bel Zhab",
     stateCount: 8,
     survivalPattern: [2, 3],
   },
+  bloomerang: {
+    birthPattern: [3, 4, 6, 7, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Bloomerang",
+    stateCount: 24,
+    survivalPattern: [2, 3, 4],
+  },
   bombers: {
     birthPattern: [2, 4],
-    boundaryRule: BoundaryRule.Toroidal,
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
     name: "Bombers",
     stateCount: 25,
     survivalPattern: [3, 4, 5],
   },
+  briansBrain: {
+    birthPattern: [2],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
+    name: "Brian's Brain",
+    stateCount: 3,
+    survivalPattern: [],
+  },
+  burst: {
+    birthPattern: [3, 4, 6, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
+    name: "Burst",
+    stateCount: 9,
+    survivalPattern: [0, 2, 3, 5, 6, 7, 8],
+  },
+  caterpillars: {
+    birthPattern: [3, 7, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Caterpillars",
+    stateCount: 4,
+    survivalPattern: [1, 2, 4, 5, 6, 7],
+  },
+  circuitGenesis: {
+    birthPattern: [1, 2, 3, 4],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Circuit Genesis",
+    stateCount: 8,
+    survivalPattern: [2, 3, 4, 5],
+  },
+  cooties: {
+    birthPattern: [2],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Cooties",
+    stateCount: 8,
+    survivalPattern: [2, 3],
+  },
   faders: {
     birthPattern: [2],
-    boundaryRule: BoundaryRule.Toroidal,
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
     name: "Faders",
     stateCount: 25,
     survivalPattern: [2],
+  },
+  glissergy: {
+    birthPattern: [2, 4, 5, 6, 7, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
+    name: "Glissergy",
+    stateCount: 5,
+    survivalPattern: [0, 3, 5, 6, 7, 8],
+  },
+  sticks: {
+    birthPattern: [2],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Sticks",
+    stateCount: 6,
+    survivalPattern: [3, 4, 5, 6],
+  },
+  worms: {
+    birthPattern: [2, 5],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
+    name: "Worms",
+    stateCount: 6,
+    survivalPattern: [3, 4, 6, 7],
   },
 };
 

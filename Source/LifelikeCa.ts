@@ -1,7 +1,7 @@
-import { BoundaryRule, getGridSampleFunction, Grid } from "./Grid";
-import { HasName } from "./HasName";
+import { CaRuleBase } from "./CaRule";
+import { BoundaryRule, FillType, getGridSampleFunction, Grid } from "./Grid";
 
-export interface LifelikeCaRule extends HasName {
+export interface LifelikeCaRule extends CaRuleBase {
   birthPattern: number[];
   boundaryRule: BoundaryRule;
   survivalPattern: number[];
@@ -12,11 +12,124 @@ interface NamedRules {
 }
 
 export const namedRules: NamedRules = {
+  assimilation: {
+    birthPattern: [3, 4, 5],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Assimilation",
+    survivalPattern: [4, 5, 6, 7],
+  },
+  bugs: {
+    birthPattern: [3, 5, 6, 7],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Bugs",
+    survivalPattern: [1, 5, 6, 7, 8],
+  },
+  coral: {
+    birthPattern: [3],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
+    name: "Coral",
+    survivalPattern: [4, 5, 6, 7, 8],
+  },
+  dayAndNight: {
+    birthPattern: [3, 6, 7, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
+    name: "Day and Night",
+    survivalPattern: [3, 4, 6, 7, 8],
+  },
+  diamoeba: {
+    birthPattern: [3, 5, 6, 7, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
+    name: "Diamoeba",
+    survivalPattern: [5, 6, 7, 8],
+  },
+  electrifiedMaze: {
+    birthPattern: [4, 5],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Electrified Maze",
+    survivalPattern: [1, 2, 3, 4, 5],
+  },
+  flakes: {
+    birthPattern: [3],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Flakes",
+    survivalPattern: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  },
   gameOfLife: {
     birthPattern: [3],
-    boundaryRule: BoundaryRule.Toroidal,
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
     name: "Game Of Life",
     survivalPattern: [2, 3],
+  },
+  gems: {
+    birthPattern: [3, 4, 5, 7],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Gems",
+    survivalPattern: [4, 5, 6, 8],
+  },
+  hTrees: {
+    birthPattern: [1],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "H-trees",
+    survivalPattern: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  },
+  landRush: {
+    birthPattern: [3, 5],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Land Rush",
+    survivalPattern: [2, 3, 4, 5, 7, 8],
+  },
+  mazectric: {
+    birthPattern: [3],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Mazectric",
+    survivalPattern: [1, 2, 3, 4],
+  },
+  plowWorld: {
+    birthPattern: [3, 7, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Plow World",
+    survivalPattern: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  },
+  slowBlob: {
+    birthPattern: [3, 6, 7],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Slow Blob",
+    survivalPattern: [1, 2, 5, 6, 7, 8],
+  },
+  stains: {
+    birthPattern: [3, 6, 7, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Stains",
+    survivalPattern: [2, 3, 5, 6, 7, 8],
+  },
+  vote: {
+    birthPattern: [5, 6, 7, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.UniformRandomBinary,
+    name: "Vote",
+    survivalPattern: [4, 5, 6, 7, 8],
+  },
+  walledCities: {
+    birthPattern: [4, 5, 6, 7, 8],
+    boundaryRule: BoundaryRule.Wrap,
+    fillType: FillType.SplatsBinary,
+    name: "Walled Cities",
+    survivalPattern: [2, 3, 4, 5],
   },
 };
 

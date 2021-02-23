@@ -1,6 +1,7 @@
 import { Color, getTwoStopGradient, unpackUByte4 } from "./Color";
 import { Point2d } from "./Geometry";
 import { Grid } from "./Grid";
+import { mod } from "./Math";
 
 export interface VideoContext {
   canvas: HTMLCanvasElement;

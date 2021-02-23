@@ -1,4 +1,5 @@
 import "normalize.css";
+import { createNumberFieldComponent } from "./Components/NumberFieldComponent";
 import {
   createSelectFieldComponent,
   OptionSpec,
@@ -92,24 +93,13 @@ const getStateCount = (caRule: CaRule) => {
   }
 };
 
-const getFillType = (caRule: CaRule) => {
-  switch (caRule.type) {
-    case "Cyclic":
-      return FillType.UniformRandom;
-    case "Generation":
-      return FillType.UniformRandomBinary;
-    case "Lifelike":
-      return FillType.UniformRandomBinary;
-  }
-};
-
 const createGridByRule = (videoContext: VideoContext, rule: CaRule) => {
   const grid = createGrid({
     dimension: {
       height: videoContext.canvas.height,
       width: videoContext.canvas.width,
     },
-    fillType: getFillType(rule),
+    fillType: rule.rule.fillType,
     stateCount: getStateCount(rule),
   });
   return grid;
@@ -228,6 +218,40 @@ const createPresetForm = (app: App, formId: string) => {
   });
 
   return form;
+};
+
+const createCyclicCaSettings = () => {
+  const { numberField: advanceThreshold } = createNumberFieldComponent({
+    label: "Advance Threshold",
+    id: "advance-threshold-number-field",
+    inputId: "advance-threshold",
+    min: 1,
+    name: "advanceThreshold",
+  });
+
+  const { numberField: neighborhoodRange } = createNumberFieldComponent({
+    id: "neighborhood-range-number-field",
+    inputId: "neighborhood-range",
+    label: "Neighborhood Range",
+    max: 10,
+    min: 1,
+    name: "neighborhoodRange",
+  });
+
+  const { numberField: stateCount } = createNumberFieldComponent({
+    id: "state-count-number-field",
+    inputId: "state-count",
+    label: "State Count",
+    max: 256,
+    min: 2,
+    name: "stateCount",
+  });
+
+  const simulationSettings = document.getElementById("simulation-settings")!;
+
+  simulationSettings.appendChild(advanceThreshold);
+  simulationSettings.appendChild(neighborhoodRange);
+  simulationSettings.appendChild(stateCount);
 };
 
 const setUpApp = () => {
