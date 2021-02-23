@@ -281,6 +281,8 @@ const setUpApp = () => {
     videoContext,
   };
 
+  setFamily(app, family);
+
   let priorTime: number;
   const framesPerSecond = 10;
   const millisecondsPerFrame = 1000 / framesPerSecond;
