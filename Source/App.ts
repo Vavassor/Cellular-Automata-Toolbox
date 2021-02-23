@@ -319,8 +319,6 @@ const setUpApp = () => {
     app,
     "family-lifelike"
   );
-
-  createCyclicCaSettings();
 };
 
 setUpApp();
