@@ -1,13 +1,32 @@
-import { Dimension2d, Point2d } from "./Geometry";
+import { times } from "./Array";
+import {
+  Aabb2d,
+  Circle,
+  clipBounds,
+  Dimension2d,
+  getCircleBounds,
+  getSquaredLength,
+  Point2d,
+  point2dSubtract,
+  point2dZero,
+} from "./Geometry";
 import { mod } from "./Math";
-import { getRandomInt } from "./Random";
+import {
+  createNormalRandomState,
+  getNormalRandom,
+  getRandomInt,
+  getRandomPoint2dInAabb2d,
+} from "./Random";
 
 export enum BoundaryRule {
-  Closed,
-  Toroidal,
+  Clip,
+  MirrorWrap,
+  Wrap,
 }
 
 export enum FillType {
+  Splats,
+  SplatsBinary,
   UniformRandom,
   UniformRandomBinary,
 }
@@ -32,6 +51,16 @@ export type GridSampleFunction = (
   y: number
 ) => number | null;
 
+type GetState = () => number;
+
+interface SplatSpec {
+  dropRadius: number;
+  dropsPerSplat: number;
+  getState: GetState;
+  splatCount: number;
+  splatSpread: number;
+}
+
 const fill = (grid: Grid, fillFunction: GridFillFunction) => {
   const { height, width } = grid.dimension;
   for (let y = 0; y < height; y++) {
@@ -42,8 +71,97 @@ const fill = (grid: Grid, fillFunction: GridFillFunction) => {
   }
 };
 
+const getGridBounds = (grid: Grid): Aabb2d => {
+  const { height, width } = grid.dimension;
+  const bounds: Aabb2d = {
+    bottomLeft: point2dZero,
+    topRight: {
+      x: width - 1,
+      y: height - 1,
+    },
+  };
+  return bounds;
+};
+
+const getRandomPoint2dInGrid = (grid: Grid) => {
+  const bounds = getGridBounds(grid);
+  const point = getRandomPoint2dInAabb2d(bounds);
+  return point;
+};
+
+const drawUniformRandomCircle = (
+  grid: Grid,
+  circle: Circle,
+  getState: GetState
+) => {
+  const { center: circleCenter, radius } = circle;
+  const squaredRadius = radius * radius;
+
+  const gridBounds = getGridBounds(grid);
+  const circleBounds = getCircleBounds(circle);
+  const clippedCircleBounds = clipBounds(circleBounds, gridBounds);
+  const { bottomLeft, topRight } = clippedCircleBounds;
+
+  for (let y = bottomLeft.y; y < topRight.y; y++) {
+    for (let x = bottomLeft.x; x < topRight.x; x++) {
+      const cellPosition: Point2d = { x, y };
+      const squaredDistance = getSquaredLength(
+        point2dSubtract(circleCenter, cellPosition)
+      );
+      if (squaredDistance <= squaredRadius) {
+        const state = getState();
+        const cellIndex = grid.dimension.width * y + x;
+        grid.cells[cellIndex] = state;
+      }
+    }
+  }
+};
+
+const drawSplats = (grid: Grid, spec: SplatSpec) => {
+  const { dropRadius, dropsPerSplat, getState, splatCount, splatSpread } = spec;
+  const normalRandomState = createNormalRandomState();
+  const splatCenters = times(splatCount, () => getRandomPoint2dInGrid(grid));
+
+  splatCenters.forEach((splatCenter) => {
+    const { x: splatX, y: splatY } = splatCenter;
+    times(dropsPerSplat, () => {
+      const dropCenter = {
+        x: Math.floor(getNormalRandom(normalRandomState, splatX, splatSpread)),
+        y: Math.floor(getNormalRandom(normalRandomState, splatY, splatSpread)),
+      };
+      const circle: Circle = {
+        center: dropCenter,
+        radius: dropRadius,
+      };
+      drawUniformRandomCircle(grid, circle, getState);
+    });
+  });
+};
+
 const fillByType = (grid: Grid, fillType: FillType) => {
   switch (fillType) {
+    case FillType.Splats:
+      fill(grid, () => 0);
+      drawSplats(grid, {
+        dropRadius: 4,
+        dropsPerSplat: 50,
+        getState: () => getRandomInt(0, grid.stateCount - 1),
+        splatCount: 10,
+        splatSpread: 12,
+      });
+      break;
+
+    case FillType.SplatsBinary:
+      fill(grid, () => 0);
+      drawSplats(grid, {
+        dropRadius: 4,
+        dropsPerSplat: 50,
+        getState: () => getRandomInt(0, 1),
+        splatCount: 10,
+        splatSpread: 12,
+      });
+      break;
+
     case FillType.UniformRandom:
       fill(grid, () => getRandomInt(0, grid.stateCount - 1));
       break;
@@ -56,7 +174,10 @@ const fillByType = (grid: Grid, fillType: FillType) => {
 
 export const createGrid = (gridSpec: GridSpec) => {
   const { dimension, stateCount } = gridSpec;
-  const fillType = gridSpec.fillType || FillType.UniformRandom;
+  const fillType =
+    gridSpec.fillType !== undefined
+      ? gridSpec.fillType
+      : FillType.UniformRandom;
 
   const grid: Grid = {
     cells: [],
@@ -69,7 +190,7 @@ export const createGrid = (gridSpec: GridSpec) => {
   return grid;
 };
 
-const sampleClosedBoundary: GridSampleFunction = (grid, x, y) => {
+const sampleClip: GridSampleFunction = (grid, x, y) => {
   const { height, width } = grid.dimension;
   const cellIndex = width * y + x;
   if (cellIndex >= 0 && cellIndex < width * height) {
@@ -78,7 +199,20 @@ const sampleClosedBoundary: GridSampleFunction = (grid, x, y) => {
   return null;
 };
 
-const sampleToroidalBoundary: GridSampleFunction = (grid, x, y) => {
+const mirror = (x: number, width: number) => {
+  const parity = Math.abs(Math.floor(x / width)) & 1;
+  return parity === 0 ? mod(x, width) : mod(width - x - 1, width);
+};
+
+const sampleMirrorWrap: GridSampleFunction = (grid, x, y) => {
+  const { height, width } = grid.dimension;
+  x = mirror(x, width);
+  y = mirror(y, height);
+  const cellIndex = width * y + x;
+  return grid.cells[cellIndex];
+};
+
+const sampleWrap: GridSampleFunction = (grid, x, y) => {
   const { height, width } = grid.dimension;
   x = mod(x, width);
   y = mod(y, height);
@@ -90,9 +224,11 @@ export const getGridSampleFunction = (
   boundaryRule: BoundaryRule
 ): GridSampleFunction => {
   switch (boundaryRule) {
-    case BoundaryRule.Closed:
-      return sampleClosedBoundary;
-    case BoundaryRule.Toroidal:
-      return sampleToroidalBoundary;
+    case BoundaryRule.Clip:
+      return sampleClip;
+    case BoundaryRule.MirrorWrap:
+      return sampleMirrorWrap;
+    case BoundaryRule.Wrap:
+      return sampleWrap;
   }
 };

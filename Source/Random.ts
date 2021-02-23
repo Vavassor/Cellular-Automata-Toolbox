@@ -1,9 +1,11 @@
+import { Aabb2d, Point2d } from "./Geometry";
+
 export interface NormalRandomState {
   hasSpare: boolean;
   spare: number;
 }
 
-export const createNormalRandomGenerator = () => {
+export const createNormalRandomState = () => {
   const state: NormalRandomState = {
     hasSpare: false,
     spare: 0,
@@ -77,4 +79,14 @@ export const getRandomFloat = (min: number, max: number) => {
 
 export const getRandomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+export const getRandomPoint2dInAabb2d = (aabb: Aabb2d): Point2d => {
+  const { x: xMin, y: yMin } = aabb.bottomLeft;
+  const { x: xMax, y: yMax } = aabb.topRight;
+  const point = {
+    x: getRandomInt(xMin, xMax),
+    y: getRandomInt(yMin, yMax),
+  };
+  return point;
 };

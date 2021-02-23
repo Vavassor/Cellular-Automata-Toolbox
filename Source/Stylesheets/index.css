@@ -49,6 +49,16 @@ h2 {
   margin: 8px 0;
 }
 
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 input[type=radio] {
   -webkit-appearance: none;
   appearance: none;
@@ -123,6 +133,37 @@ select:focus {
   max-width: 800px;
 }
 
+.number-field {
+  position: relative;
+}
+
+.number-field__label {
+  font-family: "Bitter", serif;
+  font-weight: 500;
+  left: 8px;
+  position: absolute;
+  top: 4px;
+}
+
+.number-field__input {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--color-structure);
+  border: 1px solid var(--color-on-surface);
+  border-radius: 2px;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding-block-end: 4px;
+  padding-block-start: calc(1rem + 12px);
+  padding-inline-end: 8px;
+  padding-inline-start: 8px;
+}
+
+.number-field__input:focus {
+  box-shadow: 0 0 0 3px var(--color-focus);
+  outline: none;
+}
+
 .radio-button__label {
   margin-left: 4px;
 }
@@ -139,6 +180,12 @@ select:focus {
   left: 12px;
   position: absolute;
   top: 4px;
+}
+
+.settings-grid {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .submit-button {
