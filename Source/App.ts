@@ -3,7 +3,7 @@ import { createNumberFieldComponent } from "./Components/NumberFieldComponent";
 import {
   createSelectFieldComponent,
   OptionSpec,
-} from "./Components/SelectComponent";
+} from "./Components/SelectFieldComponent";
 import {
   createFormController,
   FormController,
@@ -26,7 +26,7 @@ import {
   namedRules as namedGenerationRules,
   updateGenerationCa,
 } from "./GenerationCa";
-import { createGrid, FillType, Grid } from "./Grid";
+import { createGrid, Grid } from "./Grid";
 import {
   LifelikeCaRule,
   namedRules as namedLifelikeRules,
