@@ -1,9 +1,11 @@
 import "normalize.css";
+import { createColorPickerComponent } from "./Components/ColorPickerComponent";
 import { createNumberFieldComponent } from "./Components/NumberFieldComponent";
 import {
   createSelectFieldComponent,
   OptionSpec,
 } from "./Components/SelectFieldComponent";
+import { createColorPickerController } from "./Controllers/ColorPickerController";
 import {
   createFormController,
   FormController,
@@ -252,6 +254,18 @@ const createCyclicCaSettings = () => {
   simulationSettings.appendChild(advanceThreshold);
   simulationSettings.appendChild(neighborhoodRange);
   simulationSettings.appendChild(stateCount);
+};
+
+const createColorPicker = () => {
+  const colorPickerId = "color-picker";
+  const colorPicker = createColorPickerComponent({
+    id: colorPickerId,
+  });
+  const main = document.querySelector("main")!;
+  main.appendChild(colorPicker.colorPicker);
+  createColorPickerController({
+    id: colorPickerId,
+  });
 };
 
 const setUpApp = () => {

@@ -1,3 +1,5 @@
+import { clamp, linearRemap } from "./Math";
+
 /** Axis-Aligned Bounding Box (AABB) */
 export interface Aabb2d {
   bottomLeft: Point2d;
@@ -42,6 +44,22 @@ export const clipBounds = (aabb: Aabb2d, bounds: Aabb2d): Aabb2d => {
   return clippedAabb;
 };
 
+export const clampPoint2dToAabb2d = (point: Point2d, aabb: Aabb2d) => {
+  const result: Point2d = {
+    x: clamp(point.x, aabb.bottomLeft.x, aabb.topRight.x),
+    y: clamp(point.y, aabb.bottomLeft.y, aabb.topRight.y),
+  };
+  return result;
+};
+
+export const copyPoint2d = (point: Point2d) => {
+  const result: Point2d = {
+    x: point.x,
+    y: point.y,
+  };
+  return result;
+};
+
 export const getCircleBounds = (circle: Circle) => {
   const { center, radius } = circle;
   const radialVector: Vector2d = { x: radius, y: radius };
@@ -68,6 +86,30 @@ export const getVector2dFromDimension2d = (
     y: dimension.height,
   };
   return vector;
+};
+
+export const linearRemap2d = (
+  startBounds: Aabb2d,
+  endBounds: Aabb2d,
+  value: Vector2d
+) => {
+  const point: Point2d = {
+    x: linearRemap(
+      startBounds.bottomLeft.x,
+      startBounds.topRight.x,
+      endBounds.bottomLeft.x,
+      endBounds.topRight.x,
+      value.x
+    ),
+    y: linearRemap(
+      startBounds.topRight.y,
+      startBounds.bottomLeft.y,
+      endBounds.topRight.y,
+      endBounds.bottomLeft.y,
+      value.y
+    ),
+  };
+  return point;
 };
 
 export const point2dAdd = (p: Point2d, v: Vector2d): Vector2d => {
