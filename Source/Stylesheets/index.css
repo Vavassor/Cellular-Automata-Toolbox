@@ -1,5 +1,9 @@
 :root {
+  --color-black: #000000;
+  --color-border-shadow: rgba(0, 0, 0, 0.1);
   --color-focus: #000000;
+  --color-hue-slider-thumb: #8c909e;
+  --color-neutral-grey: #8f8f8f;
   --color-on-primary: #ffffff;
   --color-on-surface: #000000;
   --color-primary: #b80c62;
@@ -9,6 +13,7 @@
   --color-slider-track: #9ba8ac;
   --color-surface: #ffffff;
   --color-structure: #ffffff;
+  --color-white: #ffffff;
 }
 
 html {
@@ -113,8 +118,109 @@ select:focus {
   font-weight: 500;
 }
 
+.color-picker {
+  border: 1px solid var(--color-black);
+  padding: 16px;
+  width: 250px;
+}
+
+.color-picker__row {
+  display: flex;
+  padding-block-start: 16px;
+}
+
+.color-picker__swatch {
+  background: var(--color-black);
+  border: 1px solid var(--color-border-shadow);
+  height: 58px;
+  margin-inline-end: 16px;
+  min-width: 58px;
+  width: 58px;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
 .form-control {
   margin-bottom: 16px;
+}
+
+.hue-slider__input {
+  -webkit-appearance: none;
+  background: transparent;
+  height: 36px;
+  padding-block-end: 8px;
+  padding-block-start: 8px;
+  width: 100%;
+}
+
+.hue-slider__input:focus {
+  outline: none;
+}
+
+.hue-slider__input:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--color-focus);
+}
+
+.hue-slider__input::-moz-range-thumb {
+  background: var(--color-hue-slider-thumb);
+  border: none;
+  border-radius: 0;
+  height: 36px;
+  width: 8px;
+}
+
+.hue-slider__input::-moz-range-track {
+  background: linear-gradient(
+    to right,
+    #ff0000 0%,
+    #ffff00 17%,
+    #00ff00 33%,
+    #00ffff 50%,
+    #0000ff 67%,
+    #ff00ff 83%,
+    #ff0000 100%
+  );
+  height: 24px;
+  width: 100%;
+}
+
+.hue-slider__input::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    #ff0000 0%,
+    #ffff00 17%,
+    #00ff00 33%,
+    #00ffff 50%,
+    #0000ff 67%,
+    #ff00ff 83%,
+    #ff0000 100%
+  );
+  height: 24px;
+  width: 100%;
+}
+
+.hue-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: var(--color-hue-slider-thumb);
+  border: none;
+  border-radius: 0;
+  height: 36px;
+  margin-top: -6px;
+  width: 8px;
+}
+
+.hue-slider__input:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--color-focus);
+}
+
+.margin-block-end-16 {
+  margin-block-end: 16px;
+}
+
+.margin-block-start-16 {
+  margin-block-start: 16px;
 }
 
 .main-canvas {
@@ -174,6 +280,18 @@ select:focus {
 
 .radio-group__choice {
   display: flex;
+}
+
+.saturation-value__field {
+  background-color: #ff0000;
+  background-image: linear-gradient(
+      to top,
+      rgb(0, 0, 0),
+      rgba(204, 154, 129, 0)
+    ),
+    linear-gradient(to right, rgb(255, 255, 255), rgba(204, 154, 129, 0));
+  height: 128px;
+  width: 100%;
 }
 
 .select-field {
@@ -240,6 +358,54 @@ select:focus {
   box-shadow: 0 0 0 3px var(--color-focus);
 }
 
+.slider-2d {
+  margin: -12px;
+  padding: 12px;
+  position: relative;
+}
+
+.slider-2d__field {
+  background: var(--color-neutral-grey);
+  height: 128px;
+}
+
+.slider-2d__thumb {
+  background-color: var(--color-black);
+  border: 1px solid var(--color-black);
+  bottom: 0;
+  border-radius: 999px;
+  height: 24px;
+  left: 0;
+  position: absolute;
+  width: 24px;
+}
+
+.slider-2d__thumb:focus {
+  box-shadow: 0 0 0 3px var(--color-focus);
+  outline: none;
+}
+
+.slider-2d__thumb::after {
+  border: 1px solid var(--color-white);
+  border-radius: 999px;
+  bottom: 0;
+  content: " ";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.slider-2d__thumb-label {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 .submit-button {
   -webkit-appearance: none;
   appearance: none;
@@ -263,6 +429,37 @@ select:focus {
   background-color: var(--color-primary-highlight);
 }
 
+.text-field {
+  position: relative;
+}
+
+.text-field__label {
+  font-family: "Bitter", serif;
+  font-weight: 500;
+  left: 8px;
+  position: absolute;
+  top: 4px;
+}
+
+.text-field__input {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--color-structure);
+  border: 1px solid var(--color-on-surface);
+  border-radius: 2px;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding-block-end: 4px;
+  padding-block-start: calc(1rem + 12px);
+  padding-inline-end: 8px;
+  padding-inline-start: 8px;
+}
+
+.text-field__input:focus {
+  box-shadow: 0 0 0 3px var(--color-focus);
+  outline: none;
+}
+
 .visually-hidden {
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
@@ -271,6 +468,10 @@ select:focus {
   position: absolute;
   white-space: nowrap;
   width: 1px;
+}
+
+.width-100 {
+  width: 100%;
 }
 
 @media only screen and (min-width: 1024px) {
