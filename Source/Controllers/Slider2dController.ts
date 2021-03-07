@@ -315,6 +315,7 @@ const handlePointerMove = (
   controller: Slider2dController,
   event: PointerEvent
 ) => {
+  event.preventDefault();
   const pointerPosition: Point2d = { x: event.clientX, y: event.clientY };
   moveThumbToPoint(controller, pointerPosition);
 };

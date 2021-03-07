@@ -179,6 +179,19 @@ select:focus {
   width: 20px;
 }
 
+.color-control-row {
+  display: flex;
+  padding: 16px 0;
+}
+
+.color-control-row .color-button {
+  margin-right: 8px;
+}
+
+.color-control-row .color-button:last-child {
+  margin-right: 0;
+}
+
 .color-picker {
   background: var(--color-surface);
   box-shadow: 0 0 4px 1px var(--color-border-shadow);
@@ -295,6 +308,10 @@ select:focus {
   width: 100%;
 }
 
+.main-frame {
+  padding: 0 16px;
+}
+
 .main-footer {
   margin: auto;
   max-width: 800px;
@@ -354,6 +371,7 @@ select:focus {
     ),
     linear-gradient(to right, rgb(255, 255, 255), rgba(204, 154, 129, 0));
   height: 128px;
+  touch-action: none;
   width: 100%;
 }
 
@@ -430,6 +448,7 @@ select:focus {
 .slider-2d__field {
   background: var(--color-neutral-grey);
   height: 128px;
+  touch-action: none;
 }
 
 .slider-2d__thumb {

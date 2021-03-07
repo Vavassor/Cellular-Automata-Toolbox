@@ -11,79 +11,86 @@
     />
   </head>
   <body>
-    <header class="main-header">
-      <h1>Cellular Automata Toolbox</h1>
-    </header>
-    <main>
-      <canvas class="main-canvas" height="200" id="canvas" width="200"></canvas>
-      <div class="control-frame">
-        <form data-target="form" id="preset-form" novalidate>
-          <h2>Preset</h2>
-          <div
-            aria-labelledby="family"
-            class="form-control radio-group"
-            role="radiogroup"
-          >
-            <div class="control-label" id="family">Family</div>
-            <div class="radio-group__choice">
-              <input
-                autocomplete="off"
-                data-target="radioButton"
-                id="family-cyclic"
-                name="family"
-                type="radio"
-                value="Cyclic"
-              /><label class="radio-button__label" for="family-cyclic"
-                >Cyclic</label
-              >
+    <div class="main-frame">
+      <header class="main-header">
+        <h1>Cellular Automata Toolbox</h1>
+      </header>
+      <main>
+        <canvas
+          class="main-canvas"
+          height="200"
+          id="canvas"
+          width="200"
+        ></canvas>
+        <div class="control-frame">
+          <form data-target="form" id="preset-form" novalidate>
+            <h2>Preset</h2>
+            <div
+              aria-labelledby="family"
+              class="form-control radio-group"
+              role="radiogroup"
+            >
+              <div class="control-label" id="family">Family</div>
+              <div class="radio-group__choice">
+                <input
+                  autocomplete="off"
+                  data-target="radioButton"
+                  id="family-cyclic"
+                  name="family"
+                  type="radio"
+                  value="Cyclic"
+                /><label class="radio-button__label" for="family-cyclic"
+                  >Cyclic</label
+                >
+              </div>
+              <div class="radio-group__choice">
+                <input
+                  autocomplete="off"
+                  checked
+                  data-target="radioButton"
+                  id="family-generation"
+                  name="family"
+                  type="radio"
+                  value="Generation"
+                /><label class="radio-button__label" for="family-generation"
+                  >Generations</label
+                >
+              </div>
+              <div class="radio-group__choice">
+                <input
+                  autocomplete="off"
+                  data-target="radioButton"
+                  id="family-lifelike"
+                  name="family"
+                  type="radio"
+                  value="Lifelike"
+                /><label class="radio-button__label" for="family-lifelike"
+                  >Lifelike</label
+                >
+              </div>
             </div>
-            <div class="radio-group__choice">
-              <input
-                autocomplete="off"
-                checked
-                data-target="radioButton"
-                id="family-generation"
-                name="family"
-                type="radio"
-                value="Generation"
-              /><label class="radio-button__label" for="family-generation"
-                >Generations</label
-              >
+            <div class="form-control">
+              <div class="select-field">
+                <label class="control-label select-field__label" for="preset"
+                  >Preset</label
+                >
+                <select data-target="select" name="preset" id="preset">
+                  <option value="belZhab">Bel Zhab</option>
+                  <option value="bombers">Bombers</option>
+                  <option value="faders" selected>Faders</option>
+                </select>
+              </div>
             </div>
-            <div class="radio-group__choice">
-              <input
-                autocomplete="off"
-                data-target="radioButton"
-                id="family-lifelike"
-                name="family"
-                type="radio"
-                value="Lifelike"
-              /><label class="radio-button__label" for="family-lifelike"
-                >Lifelike</label
-              >
-            </div>
-          </div>
-          <div class="form-control">
-            <div class="select-field">
-              <label class="control-label select-field__label" for="preset"
-                >Preset</label
-              >
-              <select data-target="select" name="preset" id="preset">
-                <option value="belZhab">Bel Zhab</option>
-                <option value="bombers">Bombers</option>
-                <option value="faders" selected>Faders</option>
-              </select>
-            </div>
-          </div>
-          <button class="submit-button" type="submit">Apply Preset</button>
-        </form>
-      </div>
-      <div id="palette"></div>
-    </main>
-    <footer class="main-footer">
-      <a href="https://github.com/Vavassor/Cellular-Automata-Toolbox"
-        >Source code repository on GitHub</a
-      >
-    </footer>
+            <button class="submit-button" type="submit">Apply Preset</button>
+          </form>
+        </div>
+        <div class="color-control-row" id="palette"></div>
+      </main>
+      <footer class="main-footer">
+        <a href="https://github.com/Vavassor/Cellular-Automata-Toolbox"
+          >Source code repository on GitHub</a
+        >
+      </footer>
+    </div>
   </body>
 </html>
