@@ -459,23 +459,13 @@ select:focus {
   height: 24px;
   left: 0;
   position: absolute;
+  touch-action: none;
   width: 24px;
 }
 
 .slider-2d__thumb:focus {
   box-shadow: 0 0 0 3px var(--color-focus);
   outline: none;
-}
-
-.slider-2d__thumb::after {
-  border: 1px solid var(--color-white);
-  border-radius: 999px;
-  bottom: 0;
-  content: " ";
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
 }
 
 .slider-2d__thumb-label {

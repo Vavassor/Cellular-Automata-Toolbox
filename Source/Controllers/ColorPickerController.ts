@@ -1,6 +1,8 @@
+import { getCiede2000 } from "../Ciede2000";
 import {
   getHexTripletFromRgb,
   getHsvFromRgb,
+  getLabFromRgb,
   getRgbFromHexTriplet,
   getRgbFromHsv,
   getRgbHexString,
@@ -8,6 +10,7 @@ import {
   isHexTripletValid,
   Rgb,
   rgbBlack,
+  rgbWhite,
 } from "../Color";
 import { createSubId } from "../Id";
 import { roundToNearestMultiple } from "../Math";
@@ -69,6 +72,11 @@ const setFieldHue = (
   saturationValueField.style.backgroundColor = getRgbHexString(rgb);
 };
 
+const getHighContrastBorderColor = (color: Rgb) => {
+  const lab = getLabFromRgb(color);
+  return lab.l > 50 ? rgbBlack : rgbWhite;
+};
+
 const setThumbColor = (
   saturationValueSlider: Slider2dController,
   hue: number
@@ -77,6 +85,7 @@ const setThumbColor = (
   const { thumb } = saturationValueSlider.targets;
   const rgb = getRgbFromHsv({ h: hue, s: position.x, v: position.y });
   thumb.style.backgroundColor = getRgbHexString(rgb);
+  thumb.style.borderColor = getRgbHexString(getHighContrastBorderColor(rgb));
 };
 
 const setSaturationValue = (

@@ -65,6 +65,8 @@ export const createDialogController = (spec: DialogControllerSpec) => {
   const { button, canDismissWithEnterKey, dialog } = spec;
 
   const focusTrap = createFocusTrap(dialog, {
+    allowOutsideClick: true,
+    clickOutsideDeactivates: false,
     escapeDeactivates: true,
   });
   const popper = createPopper(button, dialog);
@@ -89,7 +91,7 @@ export const dismissDialog = (controller: DialogController) => {
   controller.isOpen = false;
 
   if (handleMouseDownDocument) {
-    document.removeEventListener("mousedown", handleMouseDownDocument);
+    document.body.removeEventListener("mousedown", handleMouseDownDocument);
     controller.handleMouseDownDocument = null;
   }
   if (handleKeyDownDialog) {
@@ -113,7 +115,7 @@ export const openDialog = (controller: DialogController) => {
     handleMouseDownDocument(controller, event);
   };
   controller.handleMouseDownDocument = mouseDownDocumentListener;
-  document.addEventListener("mousedown", mouseDownDocumentListener);
+  document.body.addEventListener("mousedown", mouseDownDocumentListener);
 
   controller.focusTrap.activate();
 };
