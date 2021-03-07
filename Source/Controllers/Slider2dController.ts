@@ -22,6 +22,7 @@ interface Slider2dTargets extends TargetMap {
 }
 
 interface AxisSpec {
+  initialValue: number;
   max: number;
   min: number;
   skipStepMultiplier: number;
@@ -265,9 +266,37 @@ const getThumbOffset = (point: Point2d, fieldRect: DOMRect) => {
   return clampedFieldOffset;
 };
 
+const getThumbOffsetFromValue = (
+  controller: Slider2dController,
+  value: Point2d
+) => {
+  const { field } = controller.targets;
+  const { horizontal, vertical } = controller.axesSpec;
+  const fieldRect = field.getBoundingClientRect();
+  const fieldBounds: Aabb2d = {
+    bottomLeft: point2dZero,
+    topRight: { x: fieldRect.width, y: fieldRect.height },
+  };
+  const valueBounds: Aabb2d = {
+    bottomLeft: { x: horizontal.min, y: vertical.min },
+    topRight: { x: horizontal.max, y: vertical.max },
+  };
+  const thumbOffset = linearRemap2d(valueBounds, fieldBounds, value);
+  return thumbOffset;
+};
+
+const setThumbPosition = (
+  controller: Slider2dController,
+  thumbOffset: Point2d
+) => {
+  const { thumb } = controller.targets;
+  thumb.style.left = getCssValueInPixels(thumbOffset.x);
+  thumb.style.bottom = getCssValueInPixels(thumbOffset.y);
+};
+
 const moveThumbToPoint = (controller: Slider2dController, point: Point2d) => {
   const { axesSpec, position } = controller;
-  const { field, thumb } = controller.targets;
+  const { field } = controller.targets;
   const fieldRect = field.getBoundingClientRect();
   const thumbOffset = getThumbOffset(point, fieldRect);
 
@@ -277,9 +306,7 @@ const moveThumbToPoint = (controller: Slider2dController, point: Point2d) => {
     axesSpec
   );
 
-  thumb.style.left = getCssValueInPixels(thumbOffset.x);
-  thumb.style.bottom = getCssValueInPixels(thumbOffset.y);
-
+  setThumbPosition(controller, thumbOffset);
   updateThumbLabel(controller);
   fireChangeEvent(controller, position);
 };
@@ -353,6 +380,14 @@ const setPointerEventHandlers = (
   });
 };
 
+const initValue = (controller: Slider2dController) => {
+  setThumbPosition(
+    controller,
+    getThumbOffsetFromValue(controller, controller.position)
+  );
+  updateThumbLabel(controller);
+};
+
 export const createSlider2dController = (spec: Slider2dControllerSpec) => {
   const { axes, id, handleChange } = spec;
   const { horizontal, vertical } = axes;
@@ -362,8 +397,8 @@ export const createSlider2dController = (spec: Slider2dControllerSpec) => {
     handleChange: handleChange ? handleChange : null,
     handlePointerMove: null,
     position: {
-      x: horizontal.min,
-      y: vertical.min,
+      x: horizontal.initialValue,
+      y: vertical.initialValue,
     },
     targets: getTargets(id, ["field", "thumb", "thumbLabel"]),
     thumbLabelKey: spec.thumbLabelKey || defaultThumbLabelKey,
@@ -376,5 +411,11 @@ export const createSlider2dController = (spec: Slider2dControllerSpec) => {
   setPointerEventHandlers(controller, field);
   setPointerEventHandlers(controller, thumb);
 
+  initValue(controller);
+
   return controller;
+};
+
+export const focus = (controller: Slider2dController) => {
+  controller.targets.thumb.focus();
 };

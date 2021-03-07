@@ -10,6 +10,7 @@ import {
   rgbBlack,
 } from "../Color";
 import { createSubId } from "../Id";
+import { roundToNearestMultiple } from "../Math";
 import { getTargets, TargetMap } from "./Controller";
 import {
   createSlider2dController,
@@ -18,6 +19,7 @@ import {
 } from "./Slider2dController";
 import {
   createSliderController,
+  focus as focusSliderController,
   HandleChange as SliderHandleChange,
   SliderController,
 } from "./SliderController";
@@ -47,6 +49,7 @@ export interface ColorPickerController {
 }
 
 export interface ColorPickerControllerSpec {
+  color?: Rgb;
   handleChange?: HandleChange;
   id: string;
 }
@@ -131,10 +134,17 @@ const updateHsv = (controller: ColorPickerController) => {
   setThumbColor(saturationValueSlider, hue);
 };
 
+const initColor = (controller: ColorPickerController) => {
+  setSwatchColor(controller);
+  updateHsv(controller);
+};
+
 export const createColorPickerController = (
   spec: ColorPickerControllerSpec
 ) => {
   const { handleChange, id } = spec;
+  const color = spec.color || rgbBlack;
+  const colorHsv = getHsvFromRgb(color);
   const hexadecimalId = createSubId(id, "hexadecimal");
   const hueId = createSubId(id, "hue");
   const saturationValueId = createSubId(id, "saturation-value");
@@ -178,26 +188,31 @@ export const createColorPickerController = (
   hexadecimalTextField = createTextFieldController({
     id: hexadecimalId,
     handleFocusOutCapturing: handleFocusOutCapturingColor,
+    value: getHexTripletFromRgb(color),
   });
 
   hueSlider = createSliderController({
     handleChange: handleChangeHue,
     id: hueId,
+    value: colorHsv.h,
   });
 
+  const step = 0.01;
   saturationValueSlider = createSlider2dController({
     axes: {
       horizontal: {
+        initialValue: roundToNearestMultiple(colorHsv.s, step),
         max: 1,
         min: 0,
         skipStepMultiplier: 16,
-        step: 0.01,
+        step,
       },
       vertical: {
+        initialValue: roundToNearestMultiple(colorHsv.v, step),
         max: 1,
         min: 0,
         skipStepMultiplier: 16,
-        step: 0.01,
+        step,
       },
     },
     handleChange: handleChangeSaturationValue,
@@ -206,7 +221,7 @@ export const createColorPickerController = (
   });
 
   controller = {
-    color: rgbBlack,
+    color,
     handleChange: handleChange ? handleChange : null,
     hexadecimalTextField,
     hueSlider,
@@ -214,5 +229,11 @@ export const createColorPickerController = (
     targets: getTargets(id, ["swatch"]),
   };
 
+  initColor(controller);
+
   return controller;
+};
+
+export const focus = (controller: ColorPickerController) => {
+  focusSliderController(controller.hueSlider);
 };

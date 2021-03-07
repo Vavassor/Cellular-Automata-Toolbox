@@ -1,12 +1,17 @@
-import { Color, getTwoStopGradient, unpackUByte4 } from "./Color";
+import { Color, getTwoStopGradient, Rgb } from "./Color";
 import { Point2d } from "./Geometry";
 import { Grid } from "./Grid";
-import { mod } from "./Math";
+
+interface TwoStopGradient {
+  stopA: Rgb;
+  stopB: Rgb;
+}
 
 export interface VideoContext {
   canvas: HTMLCanvasElement;
-  renderingContext: CanvasRenderingContext2D;
+  gradient: TwoStopGradient;
   pixelImageData: ImageData;
+  renderingContext: CanvasRenderingContext2D;
 }
 
 const getUint8FromUnorm = (x: number) => {
@@ -39,9 +44,10 @@ export const updateCanvas = (videoContext: VideoContext) => {
 };
 
 export const drawGrid = (videoContext: VideoContext, grid: Grid) => {
+  const { gradient } = videoContext;
   const palette = getTwoStopGradient(
-    unpackUByte4(0x000000ff),
-    unpackUByte4(0xffffffff),
+    gradient.stopA,
+    gradient.stopB,
     grid.stateCount
   );
   const { height, width } = grid.dimension;
