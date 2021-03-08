@@ -55,3 +55,8 @@ export const createSliderController = (spec: SliderControllerSpec) => {
 export const focus = (controller: SliderController) => {
   controller.targets.input.focus();
 };
+
+export const setValue = (controller: SliderController, value: number) => {
+  const { input } = controller.targets;
+  input.value = value.toString();
+};

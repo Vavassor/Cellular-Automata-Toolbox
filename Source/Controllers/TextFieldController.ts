@@ -5,7 +5,7 @@ interface ChangeEvent {
   sourceEvent: Event;
 }
 
-interface TextFieldFocusEvent {
+export interface TextFieldFocusEvent {
   controller: TextFieldController;
   sourceEvent: FocusEvent;
 }

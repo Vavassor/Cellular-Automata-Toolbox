@@ -420,3 +420,8 @@ export const createSlider2dController = (spec: Slider2dControllerSpec) => {
 export const focus = (controller: Slider2dController) => {
   controller.targets.thumb.focus();
 };
+
+export const setValue = (controller: Slider2dController, value: Point2d) => {
+  controller.position = value;
+  initValue(controller);
+};

@@ -1,4 +1,3 @@
-import { getCiede2000 } from "../Ciede2000";
 import {
   getHexTripletFromRgb,
   getHsvFromRgb,
@@ -16,20 +15,22 @@ import { createSubId } from "../Id";
 import { roundToNearestMultiple } from "../Math";
 import { getTargets, TargetMap } from "./Controller";
 import {
+  ChangeEvent as Slider2dChangeEvent,
   createSlider2dController,
-  HandleChange as Slider2dHandleChange,
+  setValue as setValueSlider2d,
   Slider2dController,
 } from "./Slider2dController";
 import {
+  ChangeEvent as SliderChangeEvent,
   createSliderController,
   focus as focusSliderController,
-  HandleChange as SliderHandleChange,
+  setValue as setValueSlider,
   SliderController,
 } from "./SliderController";
 import {
   createTextFieldController,
-  HandleFocusOutCapturing,
   TextFieldController,
+  TextFieldFocusEvent,
 } from "./TextFieldController";
 
 interface ColorPickerTargets extends TargetMap {
@@ -148,6 +149,54 @@ const initColor = (controller: ColorPickerController) => {
   updateHsv(controller);
 };
 
+const handleChangeHue = (
+  controller: ColorPickerController,
+  event: SliderChangeEvent
+) => {
+  const { hexadecimalTextField, saturationValueSlider } = controller;
+  const { input } = event.controller.targets;
+  const hue = input.valueAsNumber;
+  const hsv = getHsv(hue, saturationValueSlider);
+  setFieldHue(saturationValueSlider, hue);
+  setThumbColor(saturationValueSlider, hue);
+  setHexadecimalTextField(hexadecimalTextField, hsv);
+  setHsvColor(controller, hsv);
+};
+
+const handleChangeSaturationValue = (
+  controller: ColorPickerController,
+  event: Slider2dChangeEvent
+) => {
+  const { hexadecimalTextField, hueSlider, saturationValueSlider } = controller;
+  const hue = hueSlider.targets.input.valueAsNumber;
+  const hsv = getHsv(hue, saturationValueSlider);
+  setThumbColor(event.controller, hue);
+  setHexadecimalTextField(hexadecimalTextField, hsv);
+  setHsvColor(controller, hsv);
+};
+
+const handleFocusOutCapturingColor = (
+  controller: ColorPickerController,
+  event: TextFieldFocusEvent
+) => {
+  const { input } = event.controller.targets;
+  const value = input.value;
+  const paddedValue = value.padStart(6, "0");
+  if (value.length > 0 && isHexTripletValid(paddedValue)) {
+    const rgb = getRgbFromHexTriplet(paddedValue);
+    const hsv = getHsvFromRgb(rgb);
+    const hue = hsv.h;
+    const saturationValue = { x: hsv.s, y: hsv.v };
+    setRgbColor(controller, rgb);
+    updateHsv(controller);
+    setValueSlider(controller.hueSlider, hue);
+    setValueSlider2d(controller.saturationValueSlider, saturationValue);
+    input.value = paddedValue;
+  } else {
+    input.value = getHexTripletFromRgb(controller.color);
+  }
+};
+
 export const createColorPickerController = (
   spec: ColorPickerControllerSpec
 ) => {
@@ -159,55 +208,25 @@ export const createColorPickerController = (
   const saturationValueId = createSubId(id, "saturation-value");
 
   let controller: ColorPickerController;
-  let hexadecimalTextField: TextFieldController;
-  let hueSlider: SliderController;
-  let saturationValueSlider: Slider2dController;
 
-  const handleChangeHue: SliderHandleChange = (event) => {
-    const { input } = event.controller.targets;
-    const hue = input.valueAsNumber;
-    const hsv = getHsv(hue, saturationValueSlider);
-    setFieldHue(saturationValueSlider, hue);
-    setThumbColor(saturationValueSlider, hue);
-    setHexadecimalTextField(hexadecimalTextField, hsv);
-    setHsvColor(controller, hsv);
-  };
-
-  const handleChangeSaturationValue: Slider2dHandleChange = (event) => {
-    const hue = hueSlider.targets.input.valueAsNumber;
-    const hsv = getHsv(hue, saturationValueSlider);
-    setThumbColor(event.controller, hue);
-    setHexadecimalTextField(hexadecimalTextField, hsv);
-    setHsvColor(controller, hsv);
-  };
-
-  const handleFocusOutCapturingColor: HandleFocusOutCapturing = (event) => {
-    const { input } = event.controller.targets;
-    const value = input.value;
-    const paddedValue = value.padStart(6, "0");
-    if (value.length > 0 && isHexTripletValid(paddedValue)) {
-      setRgbColor(controller, getRgbFromHexTriplet(paddedValue));
-      updateHsv(controller);
-      input.value = paddedValue;
-    } else {
-      input.value = getHexTripletFromRgb(controller.color);
-    }
-  };
-
-  hexadecimalTextField = createTextFieldController({
+  const hexadecimalTextField = createTextFieldController({
     id: hexadecimalId,
-    handleFocusOutCapturing: handleFocusOutCapturingColor,
+    handleFocusOutCapturing: (event) => {
+      handleFocusOutCapturingColor(controller, event);
+    },
     value: getHexTripletFromRgb(color),
   });
 
-  hueSlider = createSliderController({
-    handleChange: handleChangeHue,
+  const hueSlider = createSliderController({
+    handleChange: (event) => {
+      handleChangeHue(controller, event);
+    },
     id: hueId,
     value: colorHsv.h,
   });
 
   const step = 0.01;
-  saturationValueSlider = createSlider2dController({
+  const saturationValueSlider = createSlider2dController({
     axes: {
       horizontal: {
         initialValue: roundToNearestMultiple(colorHsv.s, step),
@@ -224,7 +243,9 @@ export const createColorPickerController = (
         step,
       },
     },
-    handleChange: handleChangeSaturationValue,
+    handleChange: (event) => {
+      handleChangeSaturationValue(controller, event);
+    },
     id: saturationValueId,
     thumbLabelKey: "saturation {{x}}, value {{y}}",
   });
