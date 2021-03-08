@@ -1,11 +1,15 @@
 import "normalize.css";
-import { createColorPickerComponent } from "./Components/ColorPickerComponent";
+import { Rgb, rgbBlack, rgbWhite, unpackUByte3, unpackUByte4 } from "./Color";
+import { createColorButtonComponent } from "./Components/ColorButtonComponent";
 import { createNumberFieldComponent } from "./Components/NumberFieldComponent";
 import {
   createSelectFieldComponent,
   OptionSpec,
 } from "./Components/SelectFieldComponent";
-import { createColorPickerController } from "./Controllers/ColorPickerController";
+import {
+  createColorButtonController,
+  HandleChange as HandleChangeColorButton,
+} from "./Controllers/ColorButtonController";
 import {
   createFormController,
   FormController,
@@ -256,16 +260,18 @@ const createCyclicCaSettings = () => {
   simulationSettings.appendChild(stateCount);
 };
 
-const createColorPicker = () => {
-  const colorPickerId = "color-picker";
-  const colorPicker = createColorPickerComponent({
-    id: colorPickerId,
-  });
-  const main = document.querySelector("main")!;
-  main.appendChild(colorPicker.colorPicker);
-  createColorPickerController({
-    id: colorPickerId,
-  });
+interface ColorButtonSpec {
+  color: Rgb;
+  handleChange: HandleChangeColorButton;
+  id: string;
+  label: string;
+}
+
+const createColorButton = (mount: Element, spec: ColorButtonSpec) => {
+  const { color, handleChange, id, label } = spec;
+  const colorButton = createColorButtonComponent({ id, label });
+  mount.appendChild(colorButton.button.button);
+  createColorButtonController({ color, handleChange, id });
 };
 
 const setUpApp = () => {
@@ -274,6 +280,7 @@ const setUpApp = () => {
 
   const videoContext: VideoContext = {
     canvas,
+    gradient: { stopA: unpackUByte3(0x540622), stopB: unpackUByte3(0x69ffd2) },
     pixelImageData: context.createImageData(canvas.width, canvas.height),
     renderingContext: context,
   };
@@ -335,6 +342,24 @@ const setUpApp = () => {
     app,
     "family-lifelike"
   );
+
+  const palette = document.getElementById("palette")!;
+  createColorButton(palette, {
+    color: videoContext.gradient.stopA,
+    handleChange: (event) => {
+      videoContext.gradient.stopA = event.controller.color;
+    },
+    id: "color-a",
+    label: "Color A",
+  });
+  createColorButton(palette, {
+    color: videoContext.gradient.stopB,
+    handleChange: (event) => {
+      videoContext.gradient.stopB = event.controller.color;
+    },
+    id: "color-b",
+    label: "Color B",
+  });
 };
 
 setUpApp();

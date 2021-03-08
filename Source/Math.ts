@@ -2,6 +2,14 @@ export const clamp = (x: number, min: number, max: number) => {
   return Math.min(Math.max(x, min), max);
 };
 
+export const getDegreesFromRadians = (radians: number) => {
+  return radians * (180 / Math.PI);
+};
+
+export const getRadiansFromDegrees = (degrees: number) => {
+  return degrees * (Math.PI / 180);
+};
+
 export const lerp = (v0: number, v1: number, t: number) => {
   return (1 - t) * v0 + t * v1;
 };

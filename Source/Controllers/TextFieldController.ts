@@ -5,7 +5,7 @@ interface ChangeEvent {
   sourceEvent: Event;
 }
 
-interface TextFieldFocusEvent {
+export interface TextFieldFocusEvent {
   controller: TextFieldController;
   sourceEvent: FocusEvent;
 }
@@ -29,6 +29,7 @@ export interface TextFieldControllerSpec {
   handleFocusInCapturing?: HandleFocusInCapturing;
   handleFocusOutCapturing?: HandleFocusOutCapturing;
   id: string;
+  value?: string;
 }
 
 export const createTextFieldController = (spec: TextFieldControllerSpec) => {
@@ -37,6 +38,7 @@ export const createTextFieldController = (spec: TextFieldControllerSpec) => {
     handleFocusInCapturing,
     handleFocusOutCapturing,
     id,
+    value
   } = spec;
 
   const controller: TextFieldController = {
@@ -74,6 +76,10 @@ export const createTextFieldController = (spec: TextFieldControllerSpec) => {
       };
       handleFocusOutCapturing(textFieldFocusEvent);
     });
+  }
+
+  if (value) {
+    input.value = value;
   }
 
   return controller;

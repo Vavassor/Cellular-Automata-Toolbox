@@ -58,6 +58,27 @@ export enum SpecialKey {
 }
 
 /**
+ * @see {@link https://www.w3.org/TR/2017/CR-uievents-key-20170601/#keys-ui|UI Keys}
+ */
+export enum UiKey {
+  Accept = "Accept",
+  Again = "Again",
+  Attn = "Attn",
+  Cancel = "Cancel",
+  ContextMenu = "ContextMenu",
+  Escape = "Escape",
+  Execute = "Execute",
+  Find = "Find",
+  Help = "Help",
+  Pause = "Pause",
+  Play = "Play",
+  Props = "Props",
+  Select = "Select",
+  ZoomIn = "ZoomIn",
+  ZoomOut = "ZoomOut",
+}
+
+/**
  * @see {@link https://www.w3.org/TR/2017/CR-uievents-key-20170601/#keys-whitespace|Whitespace Keys}
  */
 export enum WhitespaceKey {
@@ -73,6 +94,7 @@ export type NamedKey =
   | ModifierKey
   | NavigationKey
   | SpecialKey
+  | UiKey
   | WhitespaceKey;
 
 const isControlCode = (codepoint: number | undefined) => {

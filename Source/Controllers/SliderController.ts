@@ -20,10 +20,11 @@ export interface SliderController {
 export interface SliderControllerSpec {
   handleChange?: HandleChange;
   id: string;
+  value?: number;
 }
 
 export const createSliderController = (spec: SliderControllerSpec) => {
-  const { handleChange, id } = spec;
+  const { handleChange, id, value } = spec;
 
   const controller: SliderController = {
     targets: getTargets(id, ["input", "label"]),
@@ -44,5 +45,18 @@ export const createSliderController = (spec: SliderControllerSpec) => {
     input.addEventListener("input", inputListener);
   }
 
+  if (value) {
+    input.value = value.toString();
+  }
+
   return controller;
+};
+
+export const focus = (controller: SliderController) => {
+  controller.targets.input.focus();
+};
+
+export const setValue = (controller: SliderController, value: number) => {
+  const { input } = controller.targets;
+  input.value = value.toString();
 };

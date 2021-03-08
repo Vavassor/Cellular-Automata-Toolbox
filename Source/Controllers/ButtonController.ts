@@ -1,6 +1,13 @@
 import { getTargets, TargetMap } from "./Controller";
 
-type HandleClickButton = (event: MouseEvent) => void;
+interface ClickEvent {
+  controller: ButtonController;
+  sourceEvent: MouseEvent;
+}
+
+export type HandleClickButton = (event: ClickEvent) => void;
+
+type ClickEventListener = (event: MouseEvent) => void;
 
 interface ButtonTargets extends TargetMap {
   button: HTMLButtonElement;
@@ -13,8 +20,8 @@ export interface ButtonControllerSpec {
 }
 
 export interface ButtonController {
+  clickEventListener: ClickEventListener | null;
   isDisabled: boolean;
-  handleClick?: HandleClickButton;
   targets: ButtonTargets;
 }
 
@@ -23,9 +30,21 @@ export const createButtonController = (
 ): ButtonController => {
   const { handleClick, id, isDisabled } = spec;
 
-  const controller: ButtonController = {
+  let controller: ButtonController;
+
+  const clickEventListener = (event: MouseEvent) => {
+    const clickEvent: ClickEvent = {
+      controller,
+      sourceEvent: event,
+    };
+    if (handleClick) {
+      handleClick(clickEvent);
+    }
+  };
+
+  controller = {
+    clickEventListener: !!handleClick ? clickEventListener : null,
     isDisabled: !!isDisabled,
-    handleClick,
     targets: getTargets(id, ["button"]),
   };
 
@@ -33,7 +52,7 @@ export const createButtonController = (
   button.disabled = controller.isDisabled;
 
   if (handleClick) {
-    button.addEventListener("click", handleClick);
+    button.addEventListener("click", clickEventListener);
   }
 
   return controller;
