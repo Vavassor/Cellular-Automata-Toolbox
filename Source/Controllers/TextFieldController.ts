@@ -38,7 +38,7 @@ export const createTextFieldController = (spec: TextFieldControllerSpec) => {
     handleFocusInCapturing,
     handleFocusOutCapturing,
     id,
-    value
+    value,
   } = spec;
 
   const controller: TextFieldController = {
@@ -83,4 +83,9 @@ export const createTextFieldController = (spec: TextFieldControllerSpec) => {
   }
 
   return controller;
+};
+
+export const setValue = (controller: TextFieldController, value: string) => {
+  const { input } = controller.targets;
+  input.value = value;
 };

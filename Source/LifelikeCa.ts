@@ -1,15 +1,27 @@
-import { CaRuleBase } from "./CaRule";
-import { BoundaryRule, FillType, getGridSampleFunction, Grid } from "./Grid";
+import { CaPreset } from "./CaPreset";
+import {
+  BoundaryRule,
+  FillType,
+  getGridSampleFunction,
+  Grid,
+  SimulationOptions,
+} from "./Grid";
 
-export interface LifelikeCaRule extends CaRuleBase {
+export interface LifelikeCaRule {
   birthPattern: number[];
-  boundaryRule: BoundaryRule;
   survivalPattern: number[];
 }
 
+export type LifelikeCaPreset = LifelikeCaRule & CaPreset;
+
 interface NamedRules {
-  [key: string]: LifelikeCaRule;
+  [key: string]: LifelikeCaPreset;
 }
+
+export const emptyRule: LifelikeCaRule = {
+  birthPattern: [],
+  survivalPattern: [],
+};
 
 export const namedRules: NamedRules = {
   assimilation: {
@@ -133,13 +145,23 @@ export const namedRules: NamedRules = {
   },
 };
 
-const matchPattern = (value: number, pattern: number[]) => {
-  return pattern.find((count) => count === value);
+export const copyLifelikeCaRule = (rule: LifelikeCaRule) => {
+  const copy: LifelikeCaRule = {
+    birthPattern: Array.from(rule.birthPattern),
+    survivalPattern: Array.from(rule.survivalPattern),
+  };
+  return copy;
 };
 
-export const updateLifelikeCa = (grid: Grid, rule: LifelikeCaRule) => {
+export const updateLifelikeCa = (
+  grid: Grid,
+  rule: LifelikeCaRule,
+  simulationOptions: SimulationOptions
+) => {
   const { height, width } = grid.dimension;
-  const gridSampleFunction = getGridSampleFunction(rule.boundaryRule);
+  const gridSampleFunction = getGridSampleFunction(
+    simulationOptions.boundaryRule
+  );
   const sample = (grid: Grid, x: number, y: number) => {
     const value = gridSampleFunction(grid, x, y);
     return value === null ? 0 : value;
@@ -159,7 +181,7 @@ export const updateLifelikeCa = (grid: Grid, rule: LifelikeCaRule) => {
       sum += sample(grid, x, y + 1);
       sum += sample(grid, x + 1, y + 1);
       const pattern = center > 0 ? rule.survivalPattern : rule.birthPattern;
-      nextCells[cellIndex] = matchPattern(sum, pattern) ? 1 : 0;
+      nextCells[cellIndex] = pattern.includes(sum) ? 1 : 0;
     }
   }
   grid.cells = nextCells;

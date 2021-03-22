@@ -31,6 +31,10 @@ export enum FillType {
   UniformRandomBinary,
 }
 
+export interface SimulationOptions {
+  boundaryRule: BoundaryRule;
+}
+
 export interface Grid {
   cells: number[];
   dimension: Dimension2d;

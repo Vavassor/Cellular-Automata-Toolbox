@@ -1,3 +1,4 @@
+import { concatTruthyItems } from "../Array";
 import { addClasses } from "../Css";
 import { createSubId } from "../Id";
 
@@ -16,6 +17,7 @@ export interface TextFieldComponentClassSpec {
 export interface TextFieldComponentSpec {
   classSpec?: TextFieldComponentClassSpec;
   defaultValue?: string;
+  extraClass?: string | string[];
   id: string;
   inputId?: string;
   label: string;
@@ -26,10 +28,10 @@ const createTextField = (
   spec: TextFieldComponentSpec,
   classSpec: TextFieldComponentClassSpec
 ) => {
-  const { id } = spec;
+  const { extraClass, id } = spec;
 
   const textField = document.createElement("div");
-  addClasses(textField, classSpec.textField);
+  addClasses(textField, concatTruthyItems(classSpec.textField, extraClass));
   textField.id = id;
 
   return textField;

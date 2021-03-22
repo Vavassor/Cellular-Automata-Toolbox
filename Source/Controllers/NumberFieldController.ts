@@ -1,12 +1,12 @@
 import { getTargets, TargetMap } from "./Controller";
 
 interface ChangeEvent {
-  controller: SelectFieldController;
+  controller: NumberFieldController;
   sourceEvent: Event;
 }
 
 export interface NumberFieldFocusEvent {
-  controller: SelectFieldController;
+  controller: NumberFieldController;
   sourceEvent: FocusEvent;
 }
 
@@ -14,35 +14,25 @@ export type HandleChange = (event: ChangeEvent) => void;
 export type HandleFocusInCapturing = (event: NumberFieldFocusEvent) => void;
 export type HandleFocusOutCapturing = (event: NumberFieldFocusEvent) => void;
 
-interface SelectFieldTargets extends TargetMap {
-  select: HTMLSelectElement;
+interface NumberFieldTargets extends TargetMap {
+  input: HTMLInputElement;
 }
 
-export interface SelectFieldController {
-  classSpec: SelectFieldControllerClassSpec;
-  handleChange: HandleChange | null;
-  targets: SelectFieldTargets;
-}
-
-export interface SelectFieldControllerSpec {
-  classSpec?: SelectFieldControllerClassSpec;
+export interface NumberFieldControllerSpec {
   handleChange?: HandleChange;
   handleFocusInCapturing?: HandleFocusInCapturing;
   handleFocusOutCapturing?: HandleFocusOutCapturing;
   id: string;
-  value?: string;
+  value?: number;
 }
 
-export interface SelectFieldControllerClassSpec {
-  select: string;
+export interface NumberFieldController {
+  handleChange: HandleChange | null;
+  targets: NumberFieldTargets;
 }
 
-const defaultClassSpec: SelectFieldControllerClassSpec = {
-  select: "select",
-};
-
-export const createSelectFieldController = (
-  spec: SelectFieldControllerSpec
+export const createNumberFieldController = (
+  spec: NumberFieldControllerSpec
 ) => {
   const {
     handleChange,
@@ -51,18 +41,16 @@ export const createSelectFieldController = (
     id,
     value,
   } = spec;
-  const classSpec = spec.classSpec || defaultClassSpec;
 
-  const controller: SelectFieldController = {
-    classSpec,
+  const controller: NumberFieldController = {
     handleChange: handleChange ? handleChange : null,
-    targets: getTargets(id, ["select"]),
+    targets: getTargets(id, ["input"]),
   };
 
-  const { select } = controller.targets;
+  const { input } = controller.targets;
 
   if (handleChange) {
-    select.addEventListener("change", (event) => {
+    input.addEventListener("change", (event) => {
       const changeEvent: ChangeEvent = {
         controller,
         sourceEvent: event,
@@ -72,7 +60,7 @@ export const createSelectFieldController = (
   }
 
   if (handleFocusInCapturing) {
-    select.addEventListener("focus", (event) => {
+    input.addEventListener("focus", (event) => {
       const textFieldFocusEvent: NumberFieldFocusEvent = {
         controller,
         sourceEvent: event,
@@ -82,7 +70,7 @@ export const createSelectFieldController = (
   }
 
   if (handleFocusOutCapturing) {
-    select.addEventListener("blur", (event) => {
+    input.addEventListener("blur", (event) => {
       const textFieldFocusEvent: NumberFieldFocusEvent = {
         controller,
         sourceEvent: event,
@@ -92,13 +80,13 @@ export const createSelectFieldController = (
   }
 
   if (value) {
-    select.value = value;
+    input.value = value.toString();
   }
 
   return controller;
 };
 
-export const setValue = (controller: SelectFieldController, value: string) => {
-  const { select } = controller.targets;
-  select.value = value;
+export const setValue = (controller: NumberFieldController, value: number) => {
+  const { input } = controller.targets;
+  input.value = value.toString();
 };

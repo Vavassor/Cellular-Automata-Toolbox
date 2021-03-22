@@ -8,6 +8,15 @@ export const findChar = (value: string, isMatch: (char: string) => boolean) => {
   return null;
 };
 
+export const isAscii = (value: string) => {
+  for (let i = 0; i < value.length; i++) {
+    if (value.charCodeAt(i) > 0x7f) {
+      return false;
+    }
+  }
+  return true;
+};
+
 export const isDigitChar = (char: string) => {
   return char >= "0" && char <= "9";
 };

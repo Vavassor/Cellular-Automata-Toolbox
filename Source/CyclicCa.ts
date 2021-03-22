@@ -1,4 +1,4 @@
-import { CaRuleBase } from "./CaRule";
+import { CaPreset } from "./CaPreset";
 import { Point2d } from "./Geometry";
 import {
   BoundaryRule,
@@ -6,20 +6,22 @@ import {
   getGridSampleFunction,
   Grid,
   GridSampleFunction,
+  SimulationOptions,
 } from "./Grid";
 
-enum Neighborhood {
-  Moore,
-  VonNeumann,
+export enum Neighborhood {
+  Moore = "Moore",
+  VonNeumann = "VonNeumann",
 }
 
-export interface CyclicCaRule extends CaRuleBase {
+export interface CyclicCaRule {
   advanceThreshold: number;
-  boundaryRule: BoundaryRule;
   neighborhood: Neighborhood;
   neighborhoodRange: number;
   stateCount: number;
 }
+
+export type CyclicCaPreset = CyclicCaRule & CaPreset;
 
 type NeighborSummationFunction = (
   grid: Grid,
@@ -30,8 +32,15 @@ type NeighborSummationFunction = (
 ) => number;
 
 interface NamedRules {
-  [key: string]: CyclicCaRule;
+  [key: string]: CyclicCaPreset;
 }
+
+export const emptyRule: CyclicCaRule = {
+  advanceThreshold: 1,
+  neighborhood: Neighborhood.Moore,
+  neighborhoodRange: 1,
+  stateCount: 2,
+};
 
 export const namedRules: NamedRules = {
   threeOneThree: {
@@ -154,9 +163,27 @@ const getNeighborSummationFunction = (neighborhood: Neighborhood) => {
   }
 };
 
-export const updateCyclicCa = (grid: Grid, rule: CyclicCaRule) => {
+export const copyCyclicCaRule = (rule: CyclicCaRule) => {
+  return Object.assign({}, rule);
+};
+
+export const parseNeighborhood = (neighborhoodString: string) => {
+  switch (neighborhoodString) {
+    default:
+    case "Moore":
+      return Neighborhood.Moore;
+    case "VonNeumann":
+      return Neighborhood.VonNeumann;
+  }
+};
+
+export const updateCyclicCa = (
+  grid: Grid,
+  rule: CyclicCaRule,
+  simulationOptions: SimulationOptions
+) => {
   const nextCells: number[] = [];
-  const sample = getGridSampleFunction(rule.boundaryRule);
+  const sample = getGridSampleFunction(simulationOptions.boundaryRule);
   const sumNeighbors = getNeighborSummationFunction(rule.neighborhood);
   const { height, width } = grid.dimension;
   for (let cellY = 0; cellY < height; cellY++) {
