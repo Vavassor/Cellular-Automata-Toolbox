@@ -70,10 +70,8 @@
               </div>
             </div>
             <div class="form-control">
-              <div class="select-field">
-                <label class="control-label select-field__label" for="preset"
-                  >Preset</label
-                >
+              <div class="select-field" id="preset-select-field">
+                <label class="select-field__label" for="preset">Preset</label>
                 <select data-target="select" name="preset" id="preset">
                   <option value="belZhab">Bel Zhab</option>
                   <option value="bombers">Bombers</option>
@@ -83,8 +81,31 @@
             </div>
             <button class="submit-button" type="submit">Apply Preset</button>
           </form>
+          <form
+            class="simulation-settings"
+            data-target="form"
+            id="simulation-settings-form"
+            novalidate
+          >
+            <h2>Simulation Settings</h2>
+            <div
+              class="select-field margin-block-end-8"
+              id="family-select-field"
+            >
+              <label class="select-field__label" for="family">Family</label>
+              <select data-target="select" name="family" id="family">
+                <option value="Cyclic" selected>Cyclic</option>
+                <option value="Generation">Generation</option>
+                <option value="Lifelike">Lifelike</option>
+              </select>
+            </div>
+            <div id="simulation-settings"></div>
+            <button class="submit-button" type="submit">Apply Settings</button>
+          </form>
         </div>
-        <div class="color-control-row" id="palette"></div>
+        <div class="palette-frame">
+          <div class="color-control-row" id="palette"></div>
+        </div>
       </main>
       <footer class="main-footer">
         <a href="https://github.com/Vavassor/Cellular-Automata-Toolbox"

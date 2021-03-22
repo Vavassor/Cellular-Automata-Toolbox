@@ -1,7 +1,10 @@
+import { concatTruthyItems } from "../Array";
+import { addClasses } from "../Css";
+
 export interface NumberFieldComponentClassSpec {
-  input: string;
-  label: string;
-  numberField: string;
+  input: string | string[];
+  label: string | string[];
+  numberField: string | string[];
 }
 
 export interface NumberFieldComponent {
@@ -12,6 +15,7 @@ export interface NumberFieldComponent {
 
 export interface NumberFieldComponentSpec {
   classSpec?: NumberFieldComponentClassSpec;
+  extraClass?: string | string[];
   id: string;
   inputId: string;
   label: string;
@@ -20,32 +24,45 @@ export interface NumberFieldComponentSpec {
   name?: string;
 }
 
-const defaultClassSpec: NumberFieldComponentClassSpec = {
+export const defaultClassSpec: NumberFieldComponentClassSpec = {
   input: "number-field__input",
   label: "number-field__label",
   numberField: "number-field",
 };
 
-const createNumberField = (id: string, frameClass: string) => {
+const createNumberField = (
+  spec: NumberFieldComponentSpec,
+  classSpec: NumberFieldComponentClassSpec
+) => {
+  const { extraClass, id } = spec;
+
   const numberField = document.createElement("div");
-  numberField.classList.add(frameClass);
+  addClasses(numberField, concatTruthyItems(classSpec.numberField, extraClass));
   numberField.id = id;
+
   return numberField;
 };
 
-const createLabel = (inputId: string, label: string, labelClass: string) => {
+const createLabel = (
+  inputId: string,
+  label: string,
+  labelClass: string | string[]
+) => {
   const element = document.createElement("label");
-  element.classList.add(labelClass);
+  addClasses(element, labelClass);
   element.htmlFor = inputId;
   element.textContent = label;
   return element;
 };
 
-const createInput = (spec: NumberFieldComponentSpec, inputClass: string) => {
+const createInput = (
+  spec: NumberFieldComponentSpec,
+  inputClass: string | string[]
+) => {
   const { inputId, max, min, name } = spec;
 
   const input = document.createElement("input");
-  input.classList.add(inputClass);
+  addClasses(input, inputClass);
   input.dataset.target = "input";
   input.id = inputId;
   input.type = "number";
@@ -64,10 +81,10 @@ const createInput = (spec: NumberFieldComponentSpec, inputClass: string) => {
 };
 
 export const createNumberFieldComponent = (spec: NumberFieldComponentSpec) => {
-  const { id, inputId, label } = spec;
+  const { inputId, label } = spec;
   const classSpec = spec.classSpec || defaultClassSpec;
 
-  const numberField = createNumberField(id, classSpec.numberField);
+  const numberField = createNumberField(spec, classSpec);
   const labelElement = createLabel(inputId, label, classSpec.label);
   const input = createInput(spec, classSpec.input);
   numberField.appendChild(labelElement);

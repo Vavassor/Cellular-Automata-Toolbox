@@ -21,6 +21,7 @@
 
 html {
   box-sizing: border-box;
+  min-width: 320px;
 }
 
 *,
@@ -52,7 +53,8 @@ body {
 
 h1 {
   margin: 8px 0;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 400;
 }
 
 h2 {
@@ -137,11 +139,31 @@ select:focus {
   background-color: var(--color-primary-highlight);
 }
 
-.control-label {
-  color: var(--color-secondary);
-  display: block;
-  font-family: "Bitter", serif;
-  font-weight: 500;
+.checkbox {
+  align-items: center;
+  display: inline-flex;
+}
+
+.checkbox__input {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("../Assets/Images/checkbox-unchecked-24px.svg");
+  border-radius: 999px;
+  height: 24px;
+  width: 24px;
+}
+
+.checkbox__input:checked {
+  background-image: url("../Assets/Images/checkbox-checked-24px.svg");
+}
+
+.checkbox__input:focus {
+  box-shadow: 0 0 0 3px var(--color-focus);
+  outline: none;
+}
+
+.checkbox__label {
+  padding-inline-start: 4px;
 }
 
 .color-button {
@@ -212,6 +234,21 @@ select:focus {
   margin-inline-end: 16px;
   min-width: 58px;
   width: 58px;
+}
+
+.control-frame {
+  grid-area: control-frame;
+}
+
+.control-label {
+  color: var(--color-secondary);
+  display: block;
+  font-family: "Bitter", serif;
+  font-weight: 500;
+}
+
+.count-checkbox {
+  margin-inline-end: 16px;
 }
 
 .flex-grow {
@@ -295,11 +332,16 @@ select:focus {
   margin-block-end: 16px;
 }
 
+.margin-block-end-8 {
+  margin-block-end: 8px;
+}
+
 .margin-block-start-16 {
   margin-block-start: 16px;
 }
 
 .main-canvas {
+  grid-area: canvas;
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: pixelated;
@@ -354,6 +396,10 @@ select:focus {
   outline: none;
 }
 
+.palette-frame {
+  grid-area: palette;
+}
+
 .radio-button__label {
   margin-left: 4px;
 }
@@ -380,6 +426,9 @@ select:focus {
 }
 
 .select-field__label {
+  color: var(--color-secondary);
+  font-family: "Bitter", serif;
+  font-weight: 500;
   left: 12px;
   position: absolute;
   top: 4px;
@@ -389,6 +438,10 @@ select:focus {
   display: grid;
   gap: 4px;
   grid-template-columns: repeat(2, 1fr);
+}
+
+.simulation-settings {
+  margin-block-start: 32px;
 }
 
 .slider__input {
@@ -549,7 +602,11 @@ select:focus {
 @media only screen and (min-width: 1024px) {
   main {
     display: grid;
+    grid-template-areas:
+      "canvas control-frame"
+      "palette control-frame";
     grid-template-columns: 1fr 400px;
+    grid-template-rows: auto 1fr;
     max-width: 1000px;
   }
 

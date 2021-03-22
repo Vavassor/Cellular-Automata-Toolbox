@@ -1,16 +1,29 @@
-import { CaRuleBase } from "./CaRule";
-import { BoundaryRule, FillType, getGridSampleFunction, Grid } from "./Grid";
+import { CaPreset } from "./CaPreset";
+import {
+  BoundaryRule,
+  FillType,
+  getGridSampleFunction,
+  Grid,
+  SimulationOptions,
+} from "./Grid";
 
-export interface GenerationCaRule extends CaRuleBase {
+export interface GenerationCaRule {
   birthPattern: number[];
-  boundaryRule: BoundaryRule;
   stateCount: number;
   survivalPattern: number[];
 }
 
+export type GenerationCaPreset = GenerationCaRule & CaPreset;
+
 interface NamedRules {
-  [key: string]: GenerationCaRule;
+  [key: string]: GenerationCaPreset;
 }
+
+export const emptyRule: GenerationCaRule = {
+  birthPattern: [],
+  stateCount: 3,
+  survivalPattern: [],
+};
 
 export const namedRules: NamedRules = {
   banners: {
@@ -119,13 +132,24 @@ export const namedRules: NamedRules = {
   },
 };
 
-const matchPattern = (value: number, pattern: number[]) => {
-  return pattern.find((count) => count === value);
+export const copyGenerationCaRule = (rule: GenerationCaRule) => {
+  const copy: GenerationCaRule = {
+    birthPattern: Array.from(rule.birthPattern),
+    stateCount: rule.stateCount,
+    survivalPattern: Array.from(rule.survivalPattern),
+  };
+  return copy;
 };
 
-export const updateGenerationCa = (grid: Grid, rule: GenerationCaRule) => {
+export const updateGenerationCa = (
+  grid: Grid,
+  rule: GenerationCaRule,
+  simulationOptions: SimulationOptions
+) => {
   const nextCells: number[] = [];
-  const gridSampleFunction = getGridSampleFunction(rule.boundaryRule);
+  const gridSampleFunction = getGridSampleFunction(
+    simulationOptions.boundaryRule
+  );
   const sampleAlive = (grid: Grid, x: number, y: number) => {
     const value = gridSampleFunction(grid, x, y);
     return value === 1 ? 1 : 0;
@@ -145,9 +169,9 @@ export const updateGenerationCa = (grid: Grid, rule: GenerationCaRule) => {
       sum += sampleAlive(grid, x, y + 1);
       sum += sampleAlive(grid, x + 1, y + 1);
       if (state === 0) {
-        nextCells[cellIndex] = matchPattern(sum, rule.birthPattern) ? 1 : 0;
+        nextCells[cellIndex] = rule.birthPattern.includes(sum) ? 1 : 0;
       } else if (state === 1) {
-        nextCells[cellIndex] = matchPattern(sum, rule.survivalPattern) ? 1 : 2;
+        nextCells[cellIndex] = rule.survivalPattern.includes(sum) ? 1 : 2;
       } else {
         nextCells[cellIndex] = (state + 1) % rule.stateCount;
       }
