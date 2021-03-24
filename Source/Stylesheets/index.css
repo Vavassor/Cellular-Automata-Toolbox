@@ -385,6 +385,7 @@ select:focus {
   border-radius: 2px;
   font-size: 1rem;
   line-height: 1.5;
+  min-width: 200px;
   padding-block-end: 4px;
   padding-block-start: calc(1rem + 12px);
   padding-inline-end: 8px;
