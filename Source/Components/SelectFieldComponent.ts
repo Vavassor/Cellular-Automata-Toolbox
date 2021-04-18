@@ -32,7 +32,7 @@ export interface SelectFieldComponent {
 export const defaultClassSpec: SelectFieldComponentClassSpec = {
   label: "select-field__label",
   option: "option",
-  select: "select",
+  select: "select-field__input",
   selectField: "select-field",
 };
 

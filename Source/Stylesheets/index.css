@@ -251,12 +251,29 @@ select:focus {
   margin-inline-end: 16px;
 }
 
+.flex-1 {
+  flex: 1;
+}
+
 .flex-grow {
   flex-grow: 1;
 }
 
 .form-control {
   margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.gap-x-8 {
+  margin-inline-end: 8px;
+}
+
+.gap-x-8:last-child {
+  margin-inline-end: 0;
 }
 
 .hue-slider__input {
@@ -366,6 +383,8 @@ select:focus {
 }
 
 .number-field {
+  display: flex;
+  flex-direction: row;
   position: relative;
 }
 
@@ -383,13 +402,15 @@ select:focus {
   background-color: var(--color-structure);
   border: 1px solid var(--color-on-surface);
   border-radius: 2px;
+  flex-grow: 1;
   font-size: 1rem;
   line-height: 1.5;
-  min-width: 200px;
+  min-width: 100px;
   padding-block-end: 4px;
   padding-block-start: calc(1rem + 12px);
   padding-inline-end: 8px;
   padding-inline-start: 8px;
+  width: 100px;
 }
 
 .number-field__input:focus {
@@ -423,7 +444,13 @@ select:focus {
 }
 
 .select-field {
+  display: flex;
+  flex-direction: row;
   position: relative;
+}
+
+.select-field__input {
+  flex-grow: 1;
 }
 
 .select-field__label {
@@ -556,6 +583,8 @@ select:focus {
 }
 
 .text-field {
+  display: flex;
+  flex-direction: row;
   position: relative;
 }
 
@@ -573,6 +602,7 @@ select:focus {
   background-color: var(--color-structure);
   border: 1px solid var(--color-on-surface);
   border-radius: 2px;
+  flex-grow: 1;
   font-size: 1rem;
   line-height: 1.5;
   padding-block-end: 4px;
