@@ -45,7 +45,7 @@ const createSettings = (
 };
 
 const createRow = () => {
-  const row = document.createElement('div');
+  const row = document.createElement("div");
   row.classList.add("form-row");
 
   return row;
@@ -71,7 +71,7 @@ export const createCyclicCaSettingsComponent = (
   const stateCountId = createSubId(id, "state-count-number-field");
 
   const advanceThreshold = createNumberFieldComponent({
-    extraClass: ["margin-block-end-8", "flex-1", "flex-grow", "gap-x-8"],
+    extraClass: ["margin-block-end-8", "form-row-item"],
     label: "Advance Threshold",
     id: advanceThresholdId,
     inputId: createSubId(id, "advance-threshold"),
@@ -81,7 +81,7 @@ export const createCyclicCaSettingsComponent = (
   });
 
   const stateCount = createNumberFieldComponent({
-    extraClass: ["margin-block-end-8", "flex-1", "flex-grow", "gap-x-8"],
+    extraClass: ["margin-block-end-8", "form-row-item"],
     id: stateCountId,
     inputId: createSubId(id, "state-count"),
     label: "State Count",
@@ -91,11 +91,11 @@ export const createCyclicCaSettingsComponent = (
   });
 
   const stateRow = createRow();
-  stateRow.appendChild(advanceThreshold.numberField)
-  stateRow.appendChild(stateCount.numberField)
+  stateRow.appendChild(advanceThreshold.numberField);
+  stateRow.appendChild(stateCount.numberField);
 
   const neighborhood = createSelectFieldComponent({
-    extraClass: ["margin-block-end-8", "flex-1", "flex-grow", "gap-x-8"],
+    extraClass: ["margin-block-end-8", "form-row-item"],
     id: neighborhoodId,
     label: "Neighborhood",
     options: [
@@ -112,7 +112,7 @@ export const createCyclicCaSettingsComponent = (
   });
 
   const neighborhoodRange = createNumberFieldComponent({
-    extraClass: ["margin-block-end-8", "flex-1", "flex-grow", "gap-x-8"],
+    extraClass: ["margin-block-end-8", "form-row-item"],
     id: neighborhoodRangeId,
     inputId: createSubId(id, "neighborhood-range"),
     label: "Neighborhood Range",
@@ -122,8 +122,8 @@ export const createCyclicCaSettingsComponent = (
   });
 
   const neighborhoodRow = createRow();
-  neighborhoodRow.appendChild(neighborhood.selectField)
-  neighborhoodRow.appendChild(neighborhoodRange.numberField)
+  neighborhoodRow.appendChild(neighborhood.selectField);
+  neighborhoodRow.appendChild(neighborhoodRange.numberField);
 
   const rulestring = createTextFieldComponent({
     extraClass: "margin-block-end-8",
