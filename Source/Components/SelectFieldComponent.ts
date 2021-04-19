@@ -9,6 +9,7 @@ export interface SelectFieldComponentClassSpec {
 }
 
 export interface OptionSpec {
+  id?: string;
   label: string;
   value: string;
 }
@@ -32,7 +33,7 @@ export interface SelectFieldComponent {
 export const defaultClassSpec: SelectFieldComponentClassSpec = {
   label: "select-field__label",
   option: "option",
-  select: "select",
+  select: "select-field__input",
   selectField: "select-field",
 };
 
@@ -54,12 +55,16 @@ const createOption = (
   optionSpec: OptionSpec,
   classSpec: SelectFieldComponentClassSpec
 ) => {
-  const { label, value } = optionSpec;
+  const { id, label, value } = optionSpec;
 
   const option = document.createElement("option");
   addClasses(option, classSpec.option);
   option.textContent = label;
   option.value = value;
+
+  if (id) {
+    option.id = id;
+  }
 
   return option;
 };

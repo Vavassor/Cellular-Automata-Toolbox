@@ -44,6 +44,13 @@ const createSettings = (
   return settings;
 };
 
+const createRow = () => {
+  const row = document.createElement("div");
+  row.classList.add("form-row");
+
+  return row;
+};
+
 const defaultClassSpec: CyclicCaSettingsComponentClassSpec = {
   settings: "cyclic-ca-settings",
 };
@@ -64,7 +71,7 @@ export const createCyclicCaSettingsComponent = (
   const stateCountId = createSubId(id, "state-count-number-field");
 
   const advanceThreshold = createNumberFieldComponent({
-    extraClass: "margin-block-end-8",
+    extraClass: ["margin-block-end-8", "form-row-item"],
     label: "Advance Threshold",
     id: advanceThresholdId,
     inputId: createSubId(id, "advance-threshold"),
@@ -73,18 +80,22 @@ export const createCyclicCaSettingsComponent = (
     name: "advanceThreshold",
   });
 
-  const neighborhoodRange = createNumberFieldComponent({
-    extraClass: "margin-block-end-8",
-    id: neighborhoodRangeId,
-    inputId: createSubId(id, "neighborhood-range"),
-    label: "Neighborhood Range",
-    max: 10,
-    min: 1,
-    name: "neighborhoodRange",
+  const stateCount = createNumberFieldComponent({
+    extraClass: ["margin-block-end-8", "form-row-item"],
+    id: stateCountId,
+    inputId: createSubId(id, "state-count"),
+    label: "State Count",
+    max: 256,
+    min: 2,
+    name: "stateCount",
   });
 
+  const stateRow = createRow();
+  stateRow.appendChild(advanceThreshold.numberField);
+  stateRow.appendChild(stateCount.numberField);
+
   const neighborhood = createSelectFieldComponent({
-    extraClass: "margin-block-end-8",
+    extraClass: ["margin-block-end-8", "form-row-item"],
     id: neighborhoodId,
     label: "Neighborhood",
     options: [
@@ -100,15 +111,19 @@ export const createCyclicCaSettingsComponent = (
     selectId: createSubId(id, "neighborhood"),
   });
 
-  const stateCount = createNumberFieldComponent({
-    extraClass: "margin-block-end-8",
-    id: stateCountId,
-    inputId: createSubId(id, "state-count"),
-    label: "State Count",
-    max: 256,
-    min: 2,
-    name: "stateCount",
+  const neighborhoodRange = createNumberFieldComponent({
+    extraClass: ["margin-block-end-8", "form-row-item"],
+    id: neighborhoodRangeId,
+    inputId: createSubId(id, "neighborhood-range"),
+    label: "Neighborhood Range",
+    max: 10,
+    min: 1,
+    name: "neighborhoodRange",
   });
+
+  const neighborhoodRow = createRow();
+  neighborhoodRow.appendChild(neighborhood.selectField);
+  neighborhoodRow.appendChild(neighborhoodRange.numberField);
 
   const rulestring = createTextFieldComponent({
     extraClass: "margin-block-end-8",
@@ -120,10 +135,8 @@ export const createCyclicCaSettingsComponent = (
 
   const settings = createSettings(spec, classSpec);
 
-  settings.appendChild(advanceThreshold.numberField);
-  settings.appendChild(neighborhood.selectField);
-  settings.appendChild(neighborhoodRange.numberField);
-  settings.appendChild(stateCount.numberField);
+  settings.appendChild(stateRow);
+  settings.appendChild(neighborhoodRow);
   settings.appendChild(rulestring.textField);
 
   const component: CyclicCaSettingsComponent = {
