@@ -1,10 +1,12 @@
 :root {
+  --color-background: #f6f8fa;
   --color-black: #000000;
   --color-border-shadow: rgba(0, 0, 0, 0.1);
   --color-focus: #000000;
   --color-button-secondary: #bfbfbf;
   --color-button-secondary-highlight: #dfdfdf;
   --color-hue-slider-thumb: #8c909e;
+  --color-light-grey: #dfdfdf;
   --color-neutral-grey: #8f8f8f;
   --color-on-button-secondary: #1a1a1c;
   --color-on-primary: #ffffff;
@@ -46,6 +48,7 @@ a:hover {
 }
 
 body {
+  background: var(--color-background);
   color: var(--color-on-surface);
   font-family: "Lato", sans-serif;
   font-size: 1rem;
@@ -103,8 +106,7 @@ legend {
 }
 
 main {
-  margin: auto;
-  max-width: 800px;
+  width: 100%;
 }
 
 option {
@@ -155,6 +157,13 @@ select:focus {
 .button:focus,
 .button:hover {
   background-color: var(--color-primary-highlight);
+}
+
+.canvas-frame {
+  display: flex;
+  grid-area: canvas;
+  justify-content: center;
+  padding-block-start: 24px;
 }
 
 .checkbox {
@@ -255,7 +264,11 @@ select:focus {
 }
 
 .control-frame {
+  background: var(--color-surface);
   grid-area: control-frame;
+  padding-block-end: 16px;
+  padding-inline-end: 16px;
+  padding-inline-start: 16px;
 }
 
 .control-label {
@@ -382,7 +395,6 @@ select:focus {
 }
 
 .main-canvas {
-  grid-area: canvas;
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: pixelated;
@@ -391,19 +403,22 @@ select:focus {
   width: 100%;
 }
 
-.main-frame {
-  padding: 0 16px;
-}
-
 .main-footer {
-  margin: auto;
-  max-width: 800px;
-  padding: 32px 0 16px 0;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-light-grey);
 }
 
 .main-header {
-  margin: auto;
-  max-width: 800px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-light-grey);
+  padding-block-end: 8px;
+  padding-block-start: 8px;
+  padding-inline-end: 24px;
+  padding-inline-start: 24px;
+}
+
+.main-heading {
+  margin: 0;
 }
 
 .number-field {
@@ -443,8 +458,17 @@ select:focus {
   outline: none;
 }
 
+.palette-control-frame {
+  margin: auto;
+  max-width: 600px;
+}
+
 .palette-frame {
   grid-area: palette;
+}
+
+.preset-form {
+  display: inline-block;
 }
 
 .radio-button__label {
@@ -584,6 +608,13 @@ select:focus {
   width: 1px;
 }
 
+.source-frame {
+  padding-block-end: 16px;
+  padding-block-start: 32px;
+  padding-inline-end: 24px;
+  padding-inline-start: 24px;
+}
+
 .submit-button {
   -webkit-appearance: none;
   appearance: none;
@@ -678,18 +709,11 @@ select:focus {
       "palette control-frame";
     grid-template-columns: 1fr 400px;
     grid-template-rows: auto 1fr;
-    max-width: 1000px;
   }
 
   .control-frame {
-    padding: 0 24px;
-  }
-
-  .main-footer {
-    max-width: 1000px;
-  }
-
-  .main-header {
-    max-width: 1000px;
+    padding-block-end: 24px;
+    padding-inline-end: 24px;
+    padding-inline-start: 24px;
   }
 }
