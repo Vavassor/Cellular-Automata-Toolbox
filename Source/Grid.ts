@@ -236,3 +236,43 @@ export const getGridSampleFunction = (
       return sampleWrap;
   }
 };
+
+export const parseBoundaryRule = (value: string | null) => {
+  if (!value) {
+    return null;
+  }
+
+  value = value.trim();
+
+  switch (value) {
+    case "Clip":
+      return BoundaryRule.Clip;
+    case "MirrorWrap":
+      return BoundaryRule.MirrorWrap;
+    case "Wrap":
+      return BoundaryRule.Wrap; 
+    default:
+      return null;
+  }
+}
+
+export const parseFillType = (value: string | null) => {
+  if (!value) {
+    return null;
+  }
+
+  value = value.trim();
+
+  switch (value) {
+    case "Splats":
+      return FillType.Splats;
+    case "SplatsBinary":
+      return FillType.SplatsBinary;
+    case "UniformRandom":
+      return FillType.UniformRandom; 
+    case "UniformRandomBinary":
+      return FillType.UniformRandomBinary;
+    default:
+      return null;
+  }
+}

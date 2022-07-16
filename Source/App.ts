@@ -1,4 +1,5 @@
 import "normalize.css";
+import { CaFamily, parseFamily } from "./CaFamily";
 import { Rgb, unpackUByte3 } from "./Color";
 import { createColorButtonComponent } from "./Components/ColorButtonComponent";
 import { createCyclicCaSettingsComponent } from "./Components/CyclicCaSettingsComponent";
@@ -6,55 +7,54 @@ import { createGenerationCaSettingsComponent } from "./Components/GenerationCaSe
 import { createLifelikeCaSettingsComponent } from "./Components/LifelikeCaSettingsComponent";
 import {
   createSelectFieldComponent,
-  OptionSpec,
+  OptionSpec
 } from "./Components/SelectFieldComponent";
 import {
   createColorButtonController,
-  HandleChange as HandleChangeColorButton,
+  HandleChange as HandleChangeColorButton
 } from "./Controllers/ColorButtonController";
 import {
   createCyclicCaSettingsController,
   CyclicCaSettingsController,
-  setRule as setRuleCyclicCaSettings,
+  setRule as setRuleCyclicCaSettings
 } from "./Controllers/CyclicaCaSettingsController";
 import {
   createFormController,
-  FormController,
+  FormController
 } from "./Controllers/FormController";
 import {
   createGenerationCaSettingsController,
   GenerationCaSettingsController,
-  setRule as setRuleGenerationCaSettings,
+  setRule as setRuleGenerationCaSettings
 } from "./Controllers/GenerationCaSettingsController";
 import {
   createLifelikeCaSettingsController,
   LifelikeCaSettingsController,
-  setRule as setRuleLifelikeCaSettings,
+  setRule as setRuleLifelikeCaSettings
 } from "./Controllers/LifelikeCaSettingsController";
 import {
   createRadioButtonController,
-  RadioButtonController,
+  RadioButtonController
 } from "./Controllers/RadioButtonController";
 import {
   createSelectFieldController,
   SelectFieldController,
-  setValue as setValueSelectField,
+  setValue as setValueSelectField
 } from "./Controllers/SelectFieldController";
 import {
   copyCyclicCaRule,
   CyclicCaRule,
   emptyRule as emptyRuleCyclic,
   namedRules as namedCyclicRules,
-  updateCyclicCa,
+  updateCyclicCa
 } from "./CyclicCa";
 import { parseRulestring as parseRulestringCyclic } from "./CyclicCaRulestring";
 import { removeAllChildNodes } from "./Element";
 import {
   copyGenerationCaRule,
-  emptyRule as emptyRuleGeneration,
-  GenerationCaRule,
+  emptyRule as emptyRuleGeneration, GenerationCaRule,
   namedRules as namedGenerationRules,
-  updateGenerationCa,
+  updateGenerationCa
 } from "./GenerationCa";
 import { parseRulestring as parseRulestringGeneration } from "./GenerationCaRulestring";
 import {
@@ -62,14 +62,15 @@ import {
   createGrid,
   FillType,
   Grid,
-  SimulationOptions,
+  parseBoundaryRule,
+  parseFillType,
+  SimulationOptions
 } from "./Grid";
 import {
   copyLifelikeCaRule,
-  emptyRule as emptyRuleLifelike,
-  LifelikeCaRule,
+  emptyRule as emptyRuleLifelike, LifelikeCaRule,
   namedRules as namedLifelikeRules,
-  updateLifelikeCa,
+  updateLifelikeCa
 } from "./LifelikeCa";
 import { parseRulestring as parseRulestringLifelike } from "./LifelikeCaRulestring";
 import "./Stylesheets/index.css";
@@ -77,14 +78,8 @@ import {
   clearCanvas,
   drawGrid,
   updateCanvas,
-  VideoContext,
+  VideoContext
 } from "./VideoContext";
-
-enum CaFamily {
-  Cyclic = "Cyclic",
-  Generation = "Generation",
-  Lifelike = "Lifelike",
-}
 
 interface TaggedCyclicCaRule {
   rule: CyclicCaRule;
@@ -143,6 +138,24 @@ const getStateCount = (caRule: CaRule) => {
     case "Lifelike":
       return 2;
   }
+};
+
+const getParamsFromUrl = () => {
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const boundaryRuleParam = urlSearchParams.get("boundary_rule");
+  const familyParam = urlSearchParams.get("family");
+  const fillTypeParam = urlSearchParams.get("fill_type");
+  const rulestringParam = urlSearchParams.get("rulestring");
+  const family = parseFamily(familyParam);
+  const fillType = parseFillType(fillTypeParam);
+  const rule = parseRulestring(rulestringParam, family);
+  const boundaryRule = parseBoundaryRule(boundaryRuleParam);
+
+  if (!boundaryRule || !family || !fillType || !rule) {
+    return null;
+  }
+
+  return { boundaryRule, family, fillType, rule };
 };
 
 const createGridByRule = (
@@ -222,6 +235,25 @@ const getNamedRule = (family: CaFamily, name: string) => {
       return { rule: namedLifelikeRules[name], type: family };
   }
 };
+
+const parseRulestring = (value: string | null, family: CaFamily | null): CyclicCaRule | GenerationCaRule | LifelikeCaRule | null => {
+  if (!value || !family) {
+    return null;
+  }
+
+  value = value.trim();
+
+  switch (family) {
+    case CaFamily.Cyclic:
+      return parseRulestringCyclic(value);
+    case CaFamily.Generation:
+      return parseRulestringGeneration(value);
+    case CaFamily.Lifelike:
+      return parseRulestringLifelike(value);
+    default:
+      return null;
+  }
+}
 
 const createPresetField = (app: App, selectId: string) => {
   const controller = createSelectFieldController({
@@ -555,27 +587,32 @@ const setUpApp = () => {
     pixelImageData: context.createImageData(canvas.width, canvas.height),
     renderingContext: context,
   };
-
-  const family = CaFamily.Generation;
+  
+  const defaultFamily = CaFamily.Generation;
   const defaultPreset = namedGenerationRules.faders;
-  const defaultRule: CaRule = {
-    rule: defaultPreset,
+
+  const params = getParamsFromUrl();
+  const initialBoundaryRule = params?.boundaryRule || defaultPreset.boundaryRule;
+  const family = params?.family || defaultFamily;
+  const initialFillType = params?.fillType || defaultPreset.fillType;
+  const initialRule: CaRule = {
+    rule: params?.rule || defaultPreset,
     type: family,
-  };
+  } as CaRule;
 
   const grid = createGridByRule(
     videoContext,
-    defaultRule,
-    defaultPreset.fillType
+    initialRule,
+    initialFillType
   );
 
   const app: App = {
     family,
     formControllers: {},
     grid,
-    rule: defaultRule,
+    rule: initialRule,
     simulationOptions: {
-      boundaryRule: defaultPreset.boundaryRule,
+      boundaryRule: initialBoundaryRule,
     },
     videoContext,
   };
@@ -609,16 +646,18 @@ const setUpApp = () => {
   app.formControllers.presetField = createPresetField(app, "preset");
   app.formControllers.cyclicFamilyRadioButton = createFamilyRadioButton(
     app,
-    "family-cyclic"
+    "family-cyclic",
+    family === CaFamily.Cyclic
   );
   app.formControllers.generationFamilyRadioButton = createFamilyRadioButton(
     app,
     "family-generation",
-    true
+    family === CaFamily.Generation
   );
   app.formControllers.lifelikeFamilyRadioButton = createFamilyRadioButton(
     app,
-    "family-lifelike"
+    "family-lifelike",
+    family === CaFamily.Lifelike
   );
 
   const palette = document.getElementById("palette")!;
