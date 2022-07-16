@@ -224,6 +224,30 @@ const sampleWrap: GridSampleFunction = (grid, x, y) => {
   return grid.cells[cellIndex];
 };
 
+export const getBoundaryRuleAsString = (boundaryRule: BoundaryRule) => {
+  switch (boundaryRule) {
+    case BoundaryRule.Clip:
+      return "Clip";
+    case BoundaryRule.MirrorWrap:
+      return "MirrorWrap";
+    case BoundaryRule.Wrap:
+      return "Wrap";
+  }
+}
+
+export const getFillTypeAsString = (fillType: FillType) => {
+  switch (fillType) {
+    case FillType.Splats:
+      return "Splats";
+    case FillType.SplatsBinary:
+      return "SplatsBinary";
+    case FillType.UniformRandom:
+      return "UniformRandom";
+    case FillType.UniformRandomBinary:
+      return "UniformRandomBinary";
+  }
+}
+
 export const getGridSampleFunction = (
   boundaryRule: BoundaryRule
 ): GridSampleFunction => {

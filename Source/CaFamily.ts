@@ -4,6 +4,10 @@ export enum CaFamily {
   Lifelike = "Lifelike",
 }
 
+export const getFamilyAsString = (family: CaFamily) => {
+  return family as string;
+}
+
 export const parseFamily = (value: string | null) => {
   if (!value) {
     return null;

@@ -1,5 +1,5 @@
 import "normalize.css";
-import { CaFamily, parseFamily } from "./CaFamily";
+import { CaFamily, getFamilyAsString, parseFamily } from "./CaFamily";
 import { Rgb, unpackUByte3 } from "./Color";
 import { createColorButtonComponent } from "./Components/ColorButtonComponent";
 import { createCyclicCaSettingsComponent } from "./Components/CyclicCaSettingsComponent";
@@ -9,6 +9,7 @@ import {
   createSelectFieldComponent,
   OptionSpec
 } from "./Components/SelectFieldComponent";
+import { ButtonController, createButtonController } from "./Controllers/ButtonController";
 import {
   createColorButtonController,
   HandleChange as HandleChangeColorButton
@@ -48,7 +49,7 @@ import {
   namedRules as namedCyclicRules,
   updateCyclicCa
 } from "./CyclicCa";
-import { parseRulestring as parseRulestringCyclic } from "./CyclicCaRulestring";
+import { getRulestring as getRulestringCyclic, parseRulestring as parseRulestringCyclic } from "./CyclicCaRulestring";
 import { removeAllChildNodes } from "./Element";
 import {
   copyGenerationCaRule,
@@ -56,11 +57,13 @@ import {
   namedRules as namedGenerationRules,
   updateGenerationCa
 } from "./GenerationCa";
-import { parseRulestring as parseRulestringGeneration } from "./GenerationCaRulestring";
+import { getRulestring as getRulestringGeneration, parseRulestring as parseRulestringGeneration } from "./GenerationCaRulestring";
 import {
   BoundaryRule,
   createGrid,
   FillType,
+  getBoundaryRuleAsString,
+  getFillTypeAsString,
   Grid,
   parseBoundaryRule,
   parseFillType,
@@ -72,7 +75,7 @@ import {
   namedRules as namedLifelikeRules,
   updateLifelikeCa
 } from "./LifelikeCa";
-import { parseRulestring as parseRulestringLifelike } from "./LifelikeCaRulestring";
+import { getRulestring as getRulestringLifelike, parseRulestring as parseRulestringLifelike } from "./LifelikeCaRulestring";
 import "./Stylesheets/index.css";
 import {
   clearCanvas,
@@ -100,6 +103,13 @@ type CaRule =
   | TaggedCyclicCaRule
   | TaggedGenerationCaRule
   | TaggedLifelikeCaRule;
+ 
+interface ClipboardUpdate {
+  boundaryRule: BoundaryRule;
+  family: CaFamily;
+  fillType: FillType;
+  rule: CaRule;
+}
 
 interface FormControllers {
   cyclicFamilyRadioButton?: RadioButtonController;
@@ -110,6 +120,7 @@ interface FormControllers {
 }
 
 interface SimulationSettingsForm {
+  copySettingsButton?: ButtonController;
   cyclicCaSettings?: CyclicCaSettingsController;
   family: CaFamily;
   familyController: SelectFieldController;
@@ -140,7 +151,7 @@ const getStateCount = (caRule: CaRule) => {
   }
 };
 
-const getParamsFromUrl = () => {
+const getSettingsFromUrl = () => {
   const urlSearchParams = new URLSearchParams(window.location.search);
   const boundaryRuleParam = urlSearchParams.get("boundary_rule");
   const familyParam = urlSearchParams.get("family");
@@ -151,7 +162,7 @@ const getParamsFromUrl = () => {
   const rule = parseRulestring(rulestringParam, family);
   const boundaryRule = parseBoundaryRule(boundaryRuleParam);
 
-  if (!boundaryRule || !family || !fillType || !rule) {
+  if (boundaryRule === null || family === null || fillType === null || !rule) {
     return null;
   }
 
@@ -233,6 +244,17 @@ const getNamedRule = (family: CaFamily, name: string) => {
       return { rule: namedGenerationRules[name], type: family };
     case CaFamily.Lifelike:
       return { rule: namedLifelikeRules[name], type: family };
+  }
+};
+
+const getRulestring = (caRule: CaRule) => {
+  switch (caRule.type) {
+    case "Cyclic":
+      return getRulestringCyclic(caRule.rule);
+    case "Generation":
+      return getRulestringGeneration(caRule.rule);
+    case "Lifelike":
+      return getRulestringLifelike(caRule.rule);
   }
 };
 
@@ -495,6 +517,38 @@ const setFamilySimulationSettings = (
   form.family = family;
 };
 
+const getFillTypeByFamily = (family: CaFamily): FillType => {
+  switch (family) {
+    case CaFamily.Cyclic:
+      return FillType.UniformRandom;
+    case CaFamily.Generation:
+      return FillType.Splats;
+    case CaFamily.Lifelike:
+      return FillType.SplatsBinary;
+  }
+}
+
+const writeSettingsToClipboard = (
+  update: ClipboardUpdate
+) => {
+  const boundaryRule = getBoundaryRuleAsString(update.boundaryRule);
+  const family = getFamilyAsString(update.family);
+  const fillType = getFillTypeAsString(update.fillType);
+  const rulestring = getRulestring(update.rule);
+
+  const params = new URLSearchParams();
+  params.set("boundary_rule", boundaryRule);
+  params.set("family", family);
+  params.set("fill_type", fillType);
+  params.set("rulestring", rulestring);
+
+  const location = window.location;
+  const path = location.protocol + "//" + location.host  + location.pathname;
+  const url = path + "?" + params.toString();
+
+  navigator.clipboard.writeText(url);
+}
+
 const createSimulationSettingsForm = (app: App) => {
   let form: SimulationSettingsForm;
 
@@ -565,7 +619,21 @@ const createSimulationSettingsForm = (app: App) => {
     id: "simulation-settings-form",
   });
 
+  const copySettingsButton = createButtonController({
+    handleClick: () => {
+      const update: ClipboardUpdate = {
+        boundaryRule: BoundaryRule.Wrap,
+        family: app.family, 
+        fillType: getFillTypeByFamily(app.family), 
+        rule: app.rule
+      };
+      writeSettingsToClipboard(update);
+    },
+    id: "copy-settings-button",
+  });
+
   form = {
+    copySettingsButton,
     family,
     familyController,
     formController,
@@ -591,12 +659,12 @@ const setUpApp = () => {
   const defaultFamily = CaFamily.Generation;
   const defaultPreset = namedGenerationRules.faders;
 
-  const params = getParamsFromUrl();
-  const initialBoundaryRule = params?.boundaryRule || defaultPreset.boundaryRule;
-  const family = params?.family || defaultFamily;
-  const initialFillType = params?.fillType || defaultPreset.fillType;
+  const settings = getSettingsFromUrl();
+  const initialBoundaryRule = settings?.boundaryRule || defaultPreset.boundaryRule;
+  const family = settings?.family || defaultFamily;
+  const initialFillType = settings?.fillType || defaultPreset.fillType;
   const initialRule: CaRule = {
-    rule: params?.rule || defaultPreset,
+    rule: settings?.rule || defaultPreset,
     type: family,
   } as CaRule;
 

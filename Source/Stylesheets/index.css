@@ -492,6 +492,29 @@ select:focus {
   width: 100%;
 }
 
+.secondary-button {
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--color-button-secondary);
+  border: none;
+  border-radius: 2px;
+  color: var(--color-on-button-secondary);
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 4px 16px;
+}
+
+.secondary-button:focus {
+  box-shadow: 0 0 0 3px var(--color-focus);
+  outline: none;
+}
+
+.secondary-button:focus,
+.secondary-button:hover {
+  background-color: var(--color-button-secondary-highlight);
+}
+
 .select-field {
   display: flex;
   flex-direction: row;
@@ -622,7 +645,7 @@ select:focus {
   border: none;
   border-radius: 2px;
   color: var(--color-on-primary);
-  display: block;
+  display: inline-block;
   font-size: 1rem;
   line-height: 1.5;
   padding: 4px 16px;
