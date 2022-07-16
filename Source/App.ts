@@ -1,6 +1,6 @@
 import "normalize.css";
 import { CaFamily, getFamilyAsString, parseFamily } from "./CaFamily";
-import { Rgb, unpackUByte3 } from "./Color";
+import { getHexTripletFromRgb, getRgbFromHexTriplet, parseHexTriplet, Rgb, unpackUByte3 } from "./Color";
 import { createColorButtonComponent } from "./Components/ColorButtonComponent";
 import { createCyclicCaSettingsComponent } from "./Components/CyclicCaSettingsComponent";
 import { createGenerationCaSettingsComponent } from "./Components/GenerationCaSettingsComponent";
@@ -106,6 +106,8 @@ type CaRule =
  
 interface ClipboardUpdate {
   boundaryRule: BoundaryRule;
+  colorA: Rgb;
+  colorB: Rgb;
   family: CaFamily;
   fillType: FillType;
   rule: CaRule;
@@ -154,10 +156,14 @@ const getStateCount = (caRule: CaRule) => {
 const getSettingsFromUrl = () => {
   const urlSearchParams = new URLSearchParams(window.location.search);
   const boundaryRuleParam = urlSearchParams.get("boundary_rule");
+  const colorAParam = urlSearchParams.get("color_a");
+  const colorBParam = urlSearchParams.get("color_b");
   const familyParam = urlSearchParams.get("family");
   const fillTypeParam = urlSearchParams.get("fill_type");
   const rulestringParam = urlSearchParams.get("rulestring");
   const family = parseFamily(familyParam);
+  const colorA = parseHexTriplet(colorAParam);
+  const colorB = parseHexTriplet(colorBParam);
   const fillType = parseFillType(fillTypeParam);
   const rule = parseRulestring(rulestringParam, family);
   const boundaryRule = parseBoundaryRule(boundaryRuleParam);
@@ -166,7 +172,7 @@ const getSettingsFromUrl = () => {
     return null;
   }
 
-  return { boundaryRule, family, fillType, rule };
+  return { boundaryRule, colorA, colorB, family, fillType, rule };
 };
 
 const createGridByRule = (
@@ -532,12 +538,16 @@ const writeSettingsToClipboard = (
   update: ClipboardUpdate
 ) => {
   const boundaryRule = getBoundaryRuleAsString(update.boundaryRule);
+  const colorA = getHexTripletFromRgb(update.colorA);
+  const colorB = getHexTripletFromRgb(update.colorB);
   const family = getFamilyAsString(update.family);
   const fillType = getFillTypeAsString(update.fillType);
   const rulestring = getRulestring(update.rule);
 
   const params = new URLSearchParams();
   params.set("boundary_rule", boundaryRule);
+  params.set("color_a", colorA);
+  params.set("color_b", colorB);
   params.set("family", family);
   params.set("fill_type", fillType);
   params.set("rulestring", rulestring);
@@ -623,6 +633,8 @@ const createSimulationSettingsForm = (app: App) => {
     handleClick: () => {
       const update: ClipboardUpdate = {
         boundaryRule: BoundaryRule.Wrap,
+        colorA: app.videoContext.gradient.stopA,
+        colorB: app.videoContext.gradient.stopB,
         family: app.family, 
         fillType: getFillTypeByFamily(app.family), 
         rule: app.rule
@@ -649,9 +661,14 @@ const setUpApp = () => {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
   const context = canvas.getContext("2d")!;
 
+  const settings = getSettingsFromUrl();
+
   const videoContext: VideoContext = {
     canvas,
-    gradient: { stopA: unpackUByte3(0x540622), stopB: unpackUByte3(0x69ffd2) },
+    gradient: {
+      stopA: settings?.colorA || unpackUByte3(0x540622),
+      stopB: settings?.colorB || unpackUByte3(0x69ffd2)
+    },
     pixelImageData: context.createImageData(canvas.width, canvas.height),
     renderingContext: context,
   };
@@ -659,7 +676,6 @@ const setUpApp = () => {
   const defaultFamily = CaFamily.Generation;
   const defaultPreset = namedGenerationRules.faders;
 
-  const settings = getSettingsFromUrl();
   const initialBoundaryRule = settings?.boundaryRule || defaultPreset.boundaryRule;
   const family = settings?.family || defaultFamily;
   const initialFillType = settings?.fillType || defaultPreset.fillType;
