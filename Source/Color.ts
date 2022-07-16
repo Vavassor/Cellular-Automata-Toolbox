@@ -294,6 +294,12 @@ export const packUbyte = (component: number) => {
   return Math.round(255 * component);
 };
 
+export const parseHexTriplet = (hexTriplet: string | null) => {
+  return hexTriplet && isHexTripletValid(hexTriplet)
+    ? getRgbFromHexTriplet(hexTriplet)
+    : null;
+}
+
 export const unpackUByte3 = (rgbInteger: number): Rgb => {
   const r = ((rgbInteger >> 16) & 0xff) / 255;
   const g = ((rgbInteger >> 8) & 0xff) / 255;
