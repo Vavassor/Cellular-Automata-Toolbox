@@ -528,7 +528,7 @@ const getFillTypeByFamily = (family: CaFamily): FillType => {
     case CaFamily.Cyclic:
       return FillType.UniformRandom;
     case CaFamily.Generation:
-      return FillType.Splats;
+      return FillType.SplatsBinary;
     case CaFamily.Lifelike:
       return FillType.SplatsBinary;
   }
@@ -605,7 +605,7 @@ const createSimulationSettingsForm = (app: App) => {
           rule: parseRulestringGeneration(rulestring)!,
           type: form.family,
         };
-        setRule(app, rule, FillType.Splats, BoundaryRule.Wrap);
+        setRule(app, rule, FillType.SplatsBinary, BoundaryRule.Wrap);
         break;
       }
 
